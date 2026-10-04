@@ -1,0 +1,21 @@
+{
+  "name": "soul-winning-journey-netlify",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "check": "node --check src/main.js && node --check src/i18n.js && node --check netlify/functions/journey-v2.mjs && node tests/sql-shape.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/database": "^2.0.0",
+    "@netlify/identity": "^2.0.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

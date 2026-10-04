@@ -1,0 +1,12 @@
+# Local Netlify folder
+.netlify
+
+# Local secrets and data
+.env
+.env.*
+prod.sql
+
+# Dependencies and build output
+node_modules
+dist
+.DS_Store
