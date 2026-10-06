@@ -89,6 +89,20 @@ function parseIdentityUser(raw: unknown): IdentityUser | null {
 }
 
 /**
+ * Returns the account that a local dev server signs in with no Google redirect, from `DEV_MEMBER_EMAIL`.
+ * Netlify Identity sends the browser to the live site after Google sign-in, so a local sign-in cannot complete.
+ */
+function devIdentityUser(email: string | undefined, isDevServer: boolean): IdentityUser | null {
+  const address = normalizeEmail(email)
+
+  if (!isDevServer || !address) {
+    return null
+  }
+
+  return { id: `dev:${address}`, email: address, name: address, provider: 'google' }
+}
+
+/**
  * Asks Netlify Identity who owns the token, so the service checks the signature and the expiry.
  * Returns null for a missing or rejected token, and throws when the service cannot answer.
  */
@@ -117,5 +131,5 @@ async function fetchIdentityUser(
   return parseIdentityUser(await response.json())
 }
 
-export { fetchIdentityUser, parseAdminEmails, resolveMember }
+export { devIdentityUser, fetchIdentityUser, parseAdminEmails, resolveMember }
 export type { IdentityUser, Member }

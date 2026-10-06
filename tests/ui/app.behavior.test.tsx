@@ -38,7 +38,11 @@ function start({ path, session = 'member', language = 'en' }: StartOptions) {
           provider: 'google',
         },
   )
-  server.getSessionHint.mockResolvedValue({ hasToken: session !== 'anon', language })
+  server.getSessionHint.mockResolvedValue({
+    hasToken: session !== 'anon',
+    devMember: false,
+    language,
+  })
   server.getPublicTotals.mockResolvedValue({ ok: true, body: { totals: fixture.totals } })
   server.getSnapshot.mockImplementation(() => succeed(structuredClone(records)))
 
@@ -522,4 +526,12 @@ test('should sign out and show the public page', async () => {
   expect(identity.logout).toHaveBeenCalledTimes(1)
   expect(screen.queryByRole('navigation')).toBeNull()
   expect(await screen.findByText('128')).toBeTruthy()
+})
+
+test('should open the records with no Identity account when the dev server signs a member in', async () => {
+  start({ path: '/journey', session: 'anon' })
+  server.getSessionHint.mockResolvedValue({ hasToken: false, devMember: true, language: 'en' })
+
+  expect(await screen.findByRole('heading', { name: 'My journey', level: 1 })).toBeTruthy()
+  expect(identity.getUser).not.toHaveBeenCalled()
 })

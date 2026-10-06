@@ -7,7 +7,7 @@ import { SiteShell } from '../components/site-shell'
 import { LanguageProvider } from '../i18n/language'
 import { DOCUMENT_TITLES } from '../i18n/translate'
 import { NoticeProvider } from '../notice/notice'
-import { SessionProvider, initialSession } from '../session/session'
+import { SessionProvider } from '../session/session'
 import { getSessionHint } from '../server/functions'
 
 import appCss from '../styles.css?url'
@@ -70,7 +70,7 @@ function RootLayout() {
   return (
     <NoticeProvider>
       <LanguageProvider initialLanguage={hint.language}>
-        <SessionProvider initial={initialSession(hint.hasToken)}>
+        <SessionProvider hint={hint}>
           <SiteShell>
             <Outlet />
           </SiteShell>

@@ -50,6 +50,18 @@ Requires Node.js 22 or newer and pnpm.
 
 `pnpm dev` starts Vite alone on port 3000. The public page and the database work there, but sign-in does not, because nothing forwards `/.netlify/identity`.
 
+### Signed-in screens on a local server
+
+Google sign-in cannot complete on a local server, because Netlify Identity sends the browser to the live site after the Google step. To work on the signed-in screens, put an address in `.env`:
+
+```
+DEV_MEMBER_EMAIL=you@example.com
+```
+
+Then start `netlify dev` again. The local server treats each request as that Google member, with no sign-in step. The member is an admin when the address is in `ADMIN_EMAILS`. Remove the line to see the signed-out page.
+
+This works only on the dev server. A build replaces the check with `false`, so a deploy ignores `DEV_MEMBER_EMAIL`. Do not use it while the local server points at the live database: the server would then read and write real records as that member.
+
 | Command | What it does |
 |---|---|
 | `pnpm test` | Runs the record-rule, sign-in, and UI tests with Vitest. |
