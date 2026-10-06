@@ -4,5 +4,8 @@ import viteReact from '@vitejs/plugin-react'
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [viteReact()],
-  test: { include: ['tests/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'] },
+  test: {
+    env: { TZ: 'UTC' },
+    include: ['tests/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
+  },
 })
