@@ -20,6 +20,7 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   loader: () => getSessionHint(),
+  headers: () => ({ 'Cache-Control': 'no-store' }),
   staleTime: Infinity,
   head: ({ loaderData }) => ({
     meta: [
