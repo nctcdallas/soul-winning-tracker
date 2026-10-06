@@ -1,6 +1,19 @@
 const ADMIN_EMAILS = "Admin@NCTC.test";
 
-const actors = {
+interface Actor {
+  sub: string;
+  email?: string;
+  provider: string;
+  name?: string;
+}
+
+interface Step {
+  as: keyof typeof actors;
+  op: string;
+  args?: unknown[];
+}
+
+const actors: Record<string, Actor | null> = {
   anon: null,
   alice: { sub: "user-alice", email: "Alice@Example.com", provider: "google", name: "Alice" },
   bob: { sub: "user-bob", email: "bob@example.com", provider: "google" },
@@ -27,7 +40,7 @@ const journey = (overrides = {}) => ({
   ...overrides,
 });
 
-const steps = [
+const steps: Step[] = [
   { as: "anon", op: "totals" },
   { as: "anon", op: "snapshot" },
   { as: "emailUser", op: "snapshot" },
@@ -130,7 +143,7 @@ const steps = [
 const ID_KEYS = new Set(["id", "journeyId"]);
 
 // Timestamps change per run, and the pg driver returns BIGINT as a string and DATE as a Date.
-function normalize(value, key) {
+function normalize(value: unknown, key?: string): unknown {
   if (Array.isArray(value)) {
     return value.map((item) => normalize(item));
   }
@@ -151,7 +164,7 @@ function normalize(value, key) {
     return value.slice(0, 10);
   }
 
-  if (ID_KEYS.has(key) && /^\d+$/.test(String(value))) {
+  if (key !== undefined && ID_KEYS.has(key) && /^\d+$/.test(String(value))) {
     return Number(value);
   }
 
@@ -159,3 +172,4 @@ function normalize(value, key) {
 }
 
 export { ADMIN_EMAILS, actors, normalize, seedSql, steps };
+export type { Actor, Step };

@@ -1,0 +1,8 @@
+import { defineConfig } from 'vitest/config'
+import viteReact from '@vitejs/plugin-react'
+
+export default defineConfig({
+  resolve: { tsconfigPaths: true },
+  plugins: [viteReact()],
+  test: { include: ['tests/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'] },
+})
