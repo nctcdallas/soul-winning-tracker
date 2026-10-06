@@ -113,6 +113,13 @@ const deletePrayerFn = createServerFn({ method: "POST" })
   .inputValidator((input: { id: number }) => input)
   .handler(({ data }) => asMember((sql, member) => deletePrayer(sql, member, data.id)));
 
+const getSessionHint = createServerFn({ method: "GET" }).handler(
+  (): { hasToken: boolean; language: "en" | "ko" } => ({
+    hasToken: Boolean(getCookie("nf_jwt")),
+    language: getCookie("soul-winning-language") === "ko" ? "ko" : "en",
+  }),
+);
+
 export {
   addPrayerFn,
   createJourneyFn,
@@ -121,6 +128,7 @@ export {
   editJourneyFn,
   editPrayerFn,
   getPublicTotals,
+  getSessionHint,
   getSnapshot,
   setPrayerStatusFn,
   setSalvationStatusFn,

@@ -1,14 +1,27 @@
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { OverviewTab } from '../components/overview-tab'
+import { PublicPage } from '../components/public-page'
+import { SnapshotGate } from '../components/snapshot-gate'
+import { POLL_INTERVAL, totalsQueryOptions } from '../queries/options'
+import { useSession } from '../session/session'
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute('/')({
+  loader: ({ context }) => context.queryClient.ensureQueryData(totalsQueryOptions()).catch(() => undefined),
+  component: Home,
+})
 
 function Home() {
-  return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">Welcome to TanStack Start</h1>
-      <p className="mt-4 text-lg">
-        Edit <code>src/routes/index.tsx</code> to get started.
-      </p>
-    </div>
-  )
+  const { session } = useSession()
+  const totals = useQuery({
+    ...totalsQueryOptions(),
+    enabled: session.kind === 'anon',
+    refetchInterval: POLL_INTERVAL,
+  })
+
+  if (session.kind === 'anon') {
+    return <PublicPage totals={totals.data} totalsUnavailable={totals.isError} />
+  }
+
+  return <SnapshotGate>{(snapshot) => <OverviewTab snapshot={snapshot} />}</SnapshotGate>
 }

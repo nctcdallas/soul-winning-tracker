@@ -1,6 +1,6 @@
 // Interface copy only. Names, locations, healing details, and prayer requests
 // remain exactly as entered by the recorder, in either language.
-const korean = {
+const korean: Record<string, string> = {
   "Soul Winning Journey": "NCTC 영혼구원 여정",
   "Overview": "한눈에 보기",
   "My journey": "나의 전도 기록",
@@ -148,40 +148,6 @@ const korean = {
   "Prayer request not found.": "기도 제목을 찾을 수 없습니다.",
   "Not found.": "찾을 수 없습니다.",
   "Records are temporarily unavailable. Please try again.": "현재 기록을 불러올 수 없습니다. 다시 시도해 주세요.",
-};
-
-export function tr(text, language) {
-  return language === "ko" ? korean[text] || text : text;
 }
 
-export function localize(root, language) {
-  document.documentElement.lang = language;
-  document.title = language === "ko" ? "NCTC 영혼구원 여정" : "Soul Winning Journey | NCTC";
-  if (language !== "ko") return;
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  while (walker.nextNode()) {
-    const node = walker.currentNode;
-    const parent = node.parentElement;
-    if (!parent || parent.closest('[translate="no"], textarea, .person-head, .journey-row, .healing, .prayer-request p')) continue;
-    const original = node.nodeValue;
-    const trimmed = original.trim();
-    let translated = korean[trimmed];
-    if (!translated) {
-      const active = trimmed.match(/^(\d+) active$/);
-      const answered = trimmed.match(/^(\d+) answered requests?$/);
-      if (active) translated = `${active[1]}건 기도 중`;
-      if (answered) translated = `${answered[1]}건 응답받음`;
-    }
-    if (translated) node.nodeValue = original.replace(trimmed, translated);
-  }
-  for (const element of root.querySelectorAll('[placeholder], [aria-label], [alt]')) {
-    for (const attribute of ["placeholder", "aria-label", "alt"]) {
-      const original = element.getAttribute(attribute);
-      if (!original) continue;
-      const prayerFor = original.match(/^Prayer request for (.+)$/);
-      const statusFor = original.match(/^Response to the gospel for (.+)$/);
-      const translated = korean[original] || (prayerFor ? "기도 제목을 입력하세요" : statusFor ? `${statusFor[1]}님의 복음에 대한 반응` : null);
-      if (translated) element.setAttribute(attribute, translated);
-    }
-  }
-}
+export { korean }

@@ -1,0 +1,58 @@
+import { useLanguage } from '#/i18n/language'
+import { useSession } from '#/session/session'
+
+/** Tells a member who signed in without Google to sign out and start again. */
+function WrongProviderScreen() {
+  const { t } = useLanguage()
+  const { signOut } = useSession()
+
+  return (
+    <section className="welcome">
+      <h1>{t('Google sign-in required')}</h1>
+      <p>{t('Please sign out and choose Continue with Google.')}</p>
+      <button type="button" className="primary-button" onClick={() => void signOut()}>
+        {t('Sign out')}
+      </button>
+    </section>
+  )
+}
+
+/** Shown while a member's records load for the first time. */
+function OpeningScreen() {
+  const { t } = useLanguage()
+
+  return (
+    <section className="welcome">
+      <h1>{t('Opening your journey…')}</h1>
+      <p>{t('Checking your records.')}</p>
+    </section>
+  )
+}
+
+interface UnavailableScreenProps {
+  message: string
+  onRetry: () => void
+}
+
+/** Shown when a member's records could not be loaded at all. */
+function UnavailableScreen({ message, onRetry }: UnavailableScreenProps) {
+  const { t } = useLanguage()
+  const { signOut } = useSession()
+
+  return (
+    <section className="welcome">
+      <h1>{t('We couldn’t open your journey.')}</h1>
+      <p>{t(message)}</p>
+      <div className="error-actions">
+        <button type="button" className="primary-button" onClick={onRetry}>
+          {t('Try again')}
+        </button>
+        <button type="button" className="text-button" onClick={() => void signOut()}>
+          {t('Sign out')}
+        </button>
+      </div>
+    </section>
+  )
+}
+
+export { OpeningScreen, UnavailableScreen, WrongProviderScreen }

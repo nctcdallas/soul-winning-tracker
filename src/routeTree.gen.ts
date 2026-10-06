@@ -10,33 +10,83 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MemberRouteImport } from './routes/_member'
+import { Route as MemberJourneyRouteImport } from './routes/_member/journey'
+import { Route as MemberPrayersRouteImport } from './routes/_member/prayers'
+import { Route as MemberRecordRouteImport } from './routes/_member/record'
+import { Route as MemberTeamRouteImport } from './routes/_member/team'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MemberRoute = MemberRouteImport.update({
+  id: '/_member',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MemberJourneyRoute = MemberJourneyRouteImport.update({
+  id: '/journey',
+  path: '/journey',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberPrayersRoute = MemberPrayersRouteImport.update({
+  id: '/prayers',
+  path: '/prayers',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberRecordRoute = MemberRecordRouteImport.update({
+  id: '/record',
+  path: '/record',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberTeamRoute = MemberTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => MemberRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/journey': typeof MemberJourneyRoute
+  '/prayers': typeof MemberPrayersRoute
+  '/record': typeof MemberRecordRoute
+  '/team': typeof MemberTeamRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/journey': typeof MemberJourneyRoute
+  '/prayers': typeof MemberPrayersRoute
+  '/record': typeof MemberRecordRoute
+  '/team': typeof MemberTeamRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_member': typeof MemberRouteWithChildren
+  '/_member/journey': typeof MemberJourneyRoute
+  '/_member/prayers': typeof MemberPrayersRoute
+  '/_member/record': typeof MemberRecordRoute
+  '/_member/team': typeof MemberTeamRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/journey' | '/prayers' | '/record' | '/team'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/journey' | '/prayers' | '/record' | '/team'
+  id:
+    | '__root__'
+    | '/'
+    | '/_member'
+    | '/_member/journey'
+    | '/_member/prayers'
+    | '/_member/record'
+    | '/_member/team'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MemberRoute: typeof MemberRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +98,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_member': {
+      id: '/_member'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MemberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_member/journey': {
+      id: '/_member/journey'
+      path: '/journey'
+      fullPath: '/journey'
+      preLoaderRoute: typeof MemberJourneyRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/prayers': {
+      id: '/_member/prayers'
+      path: '/prayers'
+      fullPath: '/prayers'
+      preLoaderRoute: typeof MemberPrayersRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/record': {
+      id: '/_member/record'
+      path: '/record'
+      fullPath: '/record'
+      preLoaderRoute: typeof MemberRecordRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/team': {
+      id: '/_member/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof MemberTeamRouteImport
+      parentRoute: typeof MemberRoute
+    }
   }
 }
 
+interface MemberRouteChildren {
+  MemberJourneyRoute: typeof MemberJourneyRoute
+  MemberPrayersRoute: typeof MemberPrayersRoute
+  MemberRecordRoute: typeof MemberRecordRoute
+  MemberTeamRoute: typeof MemberTeamRoute
+}
+
+const MemberRouteChildren: MemberRouteChildren = {
+  MemberJourneyRoute: MemberJourneyRoute,
+  MemberPrayersRoute: MemberPrayersRoute,
+  MemberRecordRoute: MemberRecordRoute,
+  MemberTeamRoute: MemberTeamRoute,
+}
+
+const MemberRouteWithChildren =
+  MemberRoute._addFileChildren(MemberRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MemberRoute: MemberRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
