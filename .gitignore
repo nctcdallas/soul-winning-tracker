@@ -19,3 +19,6 @@ dist-ssr
 .output
 .vinxi
 __unconfig*
+
+# Screenshots from tests/ui/shoot-screens.mjs
+.screens
