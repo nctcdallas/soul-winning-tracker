@@ -10,7 +10,6 @@ interface PrayerRowProps {
   onEdit: (id: number | null) => void
 }
 
-/** One prayer request with its actions, or its edit form while it is being edited. */
 function PrayerRow({ prayer, editing, onEdit }: PrayerRowProps) {
   const { t } = useLanguage()
   const run = useRunMutation()

@@ -33,7 +33,6 @@ interface PersonCardProps {
   onEditPrayer: (id: number | null) => void
 }
 
-/** A recorded person with their status, an editor for the record, and their prayer requests. */
 function PersonCard({
   person,
   prayers,
@@ -70,7 +69,11 @@ function PersonCard({
   }
 
   async function remove() {
-    if (!window.confirm(t('Remove this encounter and all its prayer requests? This cannot be undone.'))) {
+    if (
+      !window.confirm(
+        t('Remove this encounter and all its prayer requests? This cannot be undone.'),
+      )
+    ) {
       return
     }
 

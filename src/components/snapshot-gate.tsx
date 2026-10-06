@@ -4,7 +4,6 @@ import { OpeningScreen, UnavailableScreen, WrongProviderScreen } from './welcome
 import type { Snapshot } from '#/journeys/types'
 import type { ReactNode } from 'react'
 
-/** Renders its children once the member's records are loaded, and the matching screen until then. */
 function SnapshotGate({ children }: { children: (snapshot: Snapshot) => ReactNode }) {
   const { session } = useSession()
   const snapshot = useSnapshot()

@@ -7,7 +7,8 @@ import { POLL_INTERVAL, totalsQueryOptions } from '../queries/options'
 import { useSession } from '../session/session'
 
 export const Route = createFileRoute('/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(totalsQueryOptions()).catch(() => undefined),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(totalsQueryOptions()).catch(() => undefined),
   component: Home,
 })
 

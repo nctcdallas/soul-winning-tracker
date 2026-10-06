@@ -8,7 +8,6 @@ import { NAV_TABS } from './nav-tabs'
 import { useOpenTab } from './use-open-tab'
 import type { ReactNode } from 'react'
 
-/** The header, notice, and footer around every page. */
 function SiteShell({ children }: { children: ReactNode }) {
   const { language, t, toggleLanguage } = useLanguage()
   const { notice, noticeAt } = useNotice()
@@ -76,7 +75,9 @@ function SiteShell({ children }: { children: ReactNode }) {
       </main>
       <footer>
         <span>
-          {t('New Creation Training Center · Training new creations, raising end-time soul winners.')}
+          {t(
+            'New Creation Training Center · Training new creations, raising end-time soul winners.',
+          )}
         </span>
         <span className="footer-links">
           <a href="https://www.nctcdallas.org/" target="_blank" rel="noopener noreferrer">

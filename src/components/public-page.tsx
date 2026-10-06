@@ -9,7 +9,6 @@ interface PublicPageProps {
   totalsUnavailable: boolean
 }
 
-/** The signed-out landing page: live totals, the sign-in button, and what NCTC is. */
 function PublicPage({ totals, totalsUnavailable }: PublicPageProps) {
   const { language, t } = useLanguage()
 

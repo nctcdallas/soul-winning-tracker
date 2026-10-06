@@ -69,7 +69,10 @@ test.each(states)('should render $name like the legacy client', async (state) =>
   renderApp(TAB_PATHS[state.tab ?? 'overview'])
 
   if (state.open) {
-    const label = translate(state.open === 'journey-editor' ? 'Edit record' : 'Edit', state.language)
+    const label = translate(
+      state.open === 'journey-editor' ? 'Edit record' : 'Edit',
+      state.language,
+    )
     const buttons = await within(document.body).findAllByRole('button', { name: label })
 
     fireEvent.click(buttons[0])

@@ -31,7 +31,6 @@ function sessionOf(user: User | null): SessionState {
   return user.provider === 'google' ? { kind: 'member', user } : { kind: 'wrong-provider' }
 }
 
-/** Resolves who is signed in once the browser can run the Identity SDK. */
 function SessionProvider({ initial, children }: { initial: SessionState; children: ReactNode }) {
   const queryClient = useQueryClient()
   const { setNotice } = useNotice()
@@ -44,7 +43,9 @@ function SessionProvider({ initial, children }: { initial: SessionState; childre
       try {
         await handleAuthCallback()
       } catch (error) {
-        setNotice(error instanceof Error && error.message ? error.message : 'Could not complete sign-in.')
+        setNotice(
+          error instanceof Error && error.message ? error.message : 'Could not complete sign-in.',
+        )
       }
 
       const user = await getUser().catch(() => null)
@@ -71,7 +72,6 @@ function SessionProvider({ initial, children }: { initial: SessionState; childre
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
 }
 
-/** Reads the session state and the sign-out action. */
 function useSession() {
   const value = useContext(SessionContext)
 

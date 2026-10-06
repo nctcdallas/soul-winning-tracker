@@ -9,7 +9,6 @@ interface PeopleListProps {
   showRecorder?: boolean
 }
 
-/** Lists recorded people as cards, one record and one prayer editable at a time. */
 function PeopleList({ people, prayers, showRecorder = false }: PeopleListProps) {
   const [editingJourney, setEditingJourney] = useState<number | null>(null)
   const [editingPrayer, setEditingPrayer] = useState<number | null>(null)

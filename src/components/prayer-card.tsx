@@ -12,7 +12,6 @@ interface PrayerCardProps {
   onEditPrayer: (id: number | null) => void
 }
 
-/** One person on the prayer list, with active requests first and answered ones folded away. */
 function PrayerCard({ person, prayers, editingPrayerId, onEditPrayer }: PrayerCardProps) {
   const { language, t } = useLanguage()
   const { active, answered } = prayersOf(person, prayers)

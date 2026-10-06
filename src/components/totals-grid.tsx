@@ -25,7 +25,6 @@ interface TotalsGridProps {
   personal?: boolean
 }
 
-/** Shows the four ministry counts, or a dash for each while the totals are unknown. */
 function TotalsGrid({ totals, personal = false }: TotalsGridProps) {
   const { language, t } = useLanguage()
 

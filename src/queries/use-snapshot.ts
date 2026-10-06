@@ -2,6 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { useSession } from '#/session/session'
 import { POLL_INTERVAL, snapshotQueryOptions } from './options'
 
+// TanStack Query resets a query that has an error and no data to `pending` on each refetch.
+const firstLoadFailed = (state: { status: string; data: unknown }) =>
+  state.status === 'error' && state.data === undefined
+
 /** Loads and polls the member's records, and stays idle until a Google member is signed in. */
 function useSnapshot() {
   const { session } = useSession()
@@ -9,9 +13,7 @@ function useSnapshot() {
   return useQuery({
     ...snapshotQueryOptions(),
     enabled: session.kind === 'member',
-    // A failed first load stops polling so the error screen does not flicker back to "Opening".
-    refetchInterval: (query) =>
-      query.state.status === 'error' && query.state.data === undefined ? false : POLL_INTERVAL,
+    refetchInterval: (query) => (firstLoadFailed(query.state) ? false : POLL_INTERVAL),
   })
 }
 

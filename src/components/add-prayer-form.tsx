@@ -9,7 +9,6 @@ interface AddPrayerFormProps {
   placeholder: string
 }
 
-/** Adds a prayer request for one person and clears the field once it is saved. */
 function AddPrayerForm({ journeyId, inputId, placeholder }: AddPrayerFormProps) {
   const { t } = useLanguage()
   const run = useRunMutation()

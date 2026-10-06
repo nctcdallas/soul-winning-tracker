@@ -1,7 +1,6 @@
 import { useLanguage } from '#/i18n/language'
 import { useOpenTab } from './use-open-tab'
 
-/** Invites a member with no records to record their first encounter. */
 function EmptyState() {
   const { t } = useLanguage()
   const openTab = useOpenTab()

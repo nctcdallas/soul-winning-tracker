@@ -8,7 +8,6 @@ interface SectionHeadingProps {
   action?: boolean
 }
 
-/** Heads a tab with its title, and optionally a shortcut to the record form. */
 function SectionHeading({ eyebrow, heading, description, action = false }: SectionHeadingProps) {
   const { t } = useLanguage()
   const openTab = useOpenTab()

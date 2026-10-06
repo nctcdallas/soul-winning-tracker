@@ -5,7 +5,6 @@ import { SectionHeading } from './section-heading'
 import { TotalsGrid } from './totals-grid'
 import type { Snapshot } from '#/journeys/types'
 
-/** The member's own records with totals computed from them. */
 function JourneyTab({ snapshot }: { snapshot: Snapshot }) {
   const { t } = useLanguage()
 

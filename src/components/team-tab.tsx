@@ -2,7 +2,6 @@ import { PeopleList } from './people-list'
 import { SectionHeading } from './section-heading'
 import type { Snapshot } from '#/journeys/types'
 
-/** Every record across the ministry team, for leaders. */
 function TeamTab({ snapshot }: { snapshot: Snapshot }) {
   return (
     <>

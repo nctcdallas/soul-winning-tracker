@@ -7,11 +7,12 @@ import type { Snapshot } from '#/journeys/types'
 
 const RECENT_LIMIT = 3
 
-/** The member's landing tab: counts of their own records, ministry totals, and the latest people. */
 function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
   const { language, t } = useLanguage()
   const { mine, prayers, totals } = snapshot
-  const ownPrayers = prayers.filter((prayer) => mine.some((person) => person.id === prayer.journeyId))
+  const ownPrayers = prayers.filter((prayer) =>
+    mine.some((person) => person.id === prayer.journeyId),
+  )
   const activeCount = ownPrayers.filter((prayer) => prayer.status === 'active').length
   const answeredCount = ownPrayers.filter((prayer) => prayer.status === 'answered').length
 

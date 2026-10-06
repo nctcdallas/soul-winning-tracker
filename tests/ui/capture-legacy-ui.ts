@@ -1,5 +1,3 @@
-// Renders the pre-React client from git history in jsdom and records a summary of every UI state.
-// Run with `node tests/ui/capture-legacy-ui.ts`. It rewrites golden-ui.json.
 import { execFileSync } from 'node:child_process'
 import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -15,9 +13,18 @@ import type { Summary } from './summarize.ts'
 process.env.TZ = 'UTC'
 
 const LEGACY_COMMIT = 'bd8b4f9'
-const BROWSER_GLOBALS = ['window', 'document', 'localStorage', 'HTMLInputElement', 'HTMLTextAreaElement', 'NodeFilter', 'FormData']
+const BROWSER_GLOBALS = [
+  'window',
+  'document',
+  'localStorage',
+  'HTMLInputElement',
+  'HTMLTextAreaElement',
+  'NodeFilter',
+  'FormData',
+]
 
-const legacySource = (path: string) => execFileSync('git', ['show', `${LEGACY_COMMIT}:${path}`], { encoding: 'utf8' })
+const legacySource = (path: string) =>
+  execFileSync('git', ['show', `${LEGACY_COMMIT}:${path}`], { encoding: 'utf8' })
 const settle = () => new Promise((resolve) => setTimeout(resolve, 20))
 
 const directory = mkdtempSync(join(tmpdir(), 'legacy-ui-'))
@@ -35,7 +42,9 @@ writeFileSync(
 )
 writeFileSync(
   join(directory, 'main.js'),
-  legacySource('src/main.js').replace('"@netlify/identity"', '"./identity.js"').replace('import "./styles.css";', ''),
+  legacySource('src/main.js')
+    .replace('"@netlify/identity"', '"./identity.js"')
+    .replace('import "./styles.css";', ''),
 )
 
 function userFor(session: State['session']) {
@@ -68,19 +77,29 @@ function respondTo(state: State, url: string) {
 }
 
 async function capture(state: State, index: number): Promise<Summary> {
-  const { window } = new JSDOM('<!doctype html><html lang="en"><body><div id="app"></div></body></html>', {
-    url: 'https://nctcsoulwinning.org/',
-  })
+  const { window } = new JSDOM(
+    '<!doctype html><html lang="en"><body><div id="app"></div></body></html>',
+    {
+      url: 'https://nctcsoulwinning.org/',
+    },
+  )
 
   if (state.language === 'ko') {
     window.localStorage.setItem('soul-winning-language', 'ko')
   }
 
   for (const name of BROWSER_GLOBALS) {
-    Object.defineProperty(globalThis, name, { value: window[name], configurable: true, writable: true })
+    Object.defineProperty(globalThis, name, {
+      value: window[name],
+      configurable: true,
+      writable: true,
+    })
   }
 
-  Object.assign(globalThis, { legacyUser: userFor(state.session), fetch: async (url: string) => respondTo(state, url) })
+  Object.assign(globalThis, {
+    legacyUser: userFor(state.session),
+    fetch: async (url: string) => respondTo(state, url),
+  })
 
   await import(`${pathToFileURL(join(directory, 'main.js')).href}?state=${index}`)
   await settle()

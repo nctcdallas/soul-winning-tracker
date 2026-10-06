@@ -16,7 +16,7 @@ import {
   setSalvationStatus,
   snapshot,
 } from '#/server/records'
-import { ADMIN_EMAILS, actors, normalize, seedSql, steps } from './scenario'
+import { ADMIN_EMAILS, actors, maskTimestamps, seedSql, steps } from './scenario'
 import type { Result } from '#/journeys/types'
 import type { Member } from '#/server/member'
 import type { Sql } from '#/server/records'
@@ -24,8 +24,9 @@ import type { Actor } from './scenario'
 
 type MemberOperation = (sql: Sql, member: Member, ...args: unknown[]) => Promise<Result<unknown>>
 
-// golden.json holds what netlify/functions/journey-v2.mjs returned for these steps at commit ea2bda8.
-const golden: unknown[] = JSON.parse(readFileSync(new URL('./golden.json', import.meta.url), 'utf8'))
+const legacyOutcomes: unknown[] = JSON.parse(
+  readFileSync(new URL('./golden.json', import.meta.url), 'utf8'),
+)
 
 const memberOperations: Record<string, MemberOperation> = {
   snapshot,
@@ -58,7 +59,9 @@ async function runStep(as: string, op: string, args: unknown[]): Promise<Result<
 beforeAll(async () => {
   const connectionString = await database.start()
 
-  await database.applyMigrations(fileURLToPath(new URL('../../netlify/database/migrations', import.meta.url)))
+  await database.applyMigrations(
+    fileURLToPath(new URL('../../netlify/database/migrations', import.meta.url)),
+  )
   await database.exec(seedSql)
   connection = getDatabase({ connectionString })
 })
@@ -74,11 +77,13 @@ test.each(steps.map((step, index) => ({ index, ...step })))(
     const result = await runStep(as, op, args)
 
     expect(
-      normalize({
+      maskTimestamps({
         as,
         op,
-        ...(result.ok ? { body: result.body } : { status: result.status, body: { error: result.error } }),
+        ...(result.ok
+          ? { body: result.body }
+          : { status: result.status, body: { error: result.error } }),
       }),
-    ).toEqual(golden[index])
+    ).toEqual(legacyOutcomes[index])
   },
 )

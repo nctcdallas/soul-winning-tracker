@@ -31,7 +31,12 @@ function start({ path, session = 'member', language = 'en' }: StartOptions) {
   identity.getUser.mockResolvedValue(
     session === 'anon'
       ? null
-      : { id: 'user-grace', email: fixture.viewer.email, name: fixture.viewer.displayName, provider: 'google' },
+      : {
+          id: 'user-grace',
+          email: fixture.viewer.email,
+          name: fixture.viewer.displayName,
+          provider: 'google',
+        },
   )
   server.getSessionHint.mockResolvedValue({ hasToken: session !== 'anon', language })
   server.getPublicTotals.mockResolvedValue({ ok: true, body: { totals: fixture.totals } })
@@ -324,7 +329,11 @@ test('should edit a record and close its editor on save', async () => {
 })
 
 test('should show the server error in the notice', async () => {
-  server.setSalvationStatusFn.mockResolvedValue({ ok: false, status: 404, error: 'Record not found.' })
+  server.setSalvationStatusFn.mockResolvedValue({
+    ok: false,
+    status: 404,
+    error: 'Record not found.',
+  })
   start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
@@ -335,7 +344,11 @@ test('should show the server error in the notice', async () => {
 })
 
 test('should show the server error in Korean when the language is Korean', async () => {
-  server.setSalvationStatusFn.mockResolvedValue({ ok: false, status: 404, error: 'Record not found.' })
+  server.setSalvationStatusFn.mockResolvedValue({
+    ok: false,
+    status: 404,
+    error: 'Record not found.',
+  })
   start({ path: '/journey', language: 'ko' })
 
   const card = await cardOf('Marcus <T>')
@@ -347,7 +360,11 @@ test('should show the server error in Korean when the language is Korean', async
 
 test('should say so when a successful action leaves the records unreloadable', async () => {
   server.setSalvationStatusFn.mockImplementation(() => {
-    server.getSnapshot.mockResolvedValue({ ok: false, status: 503, error: 'Records are temporarily unavailable. Please try again.' })
+    server.getSnapshot.mockResolvedValue({
+      ok: false,
+      status: 503,
+      error: 'Records are temporarily unavailable. Please try again.',
+    })
 
     return succeed()
   })
@@ -421,7 +438,11 @@ test('should show a failed poll as the notice and keep the loaded records', asyn
 
   await cardOf('Marcus <T>')
   server.getSnapshot.mockImplementation(() =>
-    Promise.resolve({ ok: false, status: 503, error: 'Records are temporarily unavailable. Please try again.' }),
+    Promise.resolve({
+      ok: false,
+      status: 503,
+      error: 'Records are temporarily unavailable. Please try again.',
+    }),
   )
   await router.options.context.queryClient.refetchQueries({ queryKey: ['snapshot'] })
 

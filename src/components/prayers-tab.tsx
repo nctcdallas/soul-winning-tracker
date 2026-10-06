@@ -4,7 +4,6 @@ import { PrayerCard } from './prayer-card'
 import { SectionHeading } from './section-heading'
 import type { Snapshot } from '#/journeys/types'
 
-/** Every person the member recorded, as a prayer list. */
 function PrayersTab({ snapshot }: { snapshot: Snapshot }) {
   const [editingPrayer, setEditingPrayer] = useState<number | null>(null)
 

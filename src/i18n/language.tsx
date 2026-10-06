@@ -19,7 +19,6 @@ function writeLanguageCookie(language: Language) {
   document.cookie = `${LANGUAGE_COOKIE}=${language}; path=/; max-age=31536000; samesite=lax`
 }
 
-/** Switches a visitor who chose Korean before the choice moved from localStorage to the cookie. */
 function carryOverStoredLanguage() {
   if (hasLanguageCookie()) {
     return false
@@ -39,7 +38,6 @@ function carryOverStoredLanguage() {
   return true
 }
 
-/** Provides the page language and keeps the document `lang` and title in step with it. */
 function LanguageProvider({
   initialLanguage,
   children,
@@ -72,7 +70,6 @@ function LanguageProvider({
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }
 
-/** Reads the page language, its translator, and the toggle. */
 function useLanguage() {
   const value = useContext(LanguageContext)
 

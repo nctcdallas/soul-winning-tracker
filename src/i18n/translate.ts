@@ -37,9 +37,7 @@ function prayerPlaceholderLabel(name: string, language: Language) {
 }
 
 function statusAriaLabel(name: string, language: Language) {
-  return language === 'ko'
-    ? `${name}님의 복음에 대한 반응`
-    : `Response to the gospel for ${name}`
+  return language === 'ko' ? `${name}님의 복음에 대한 반응` : `Response to the gospel for ${name}`
 }
 
 function youtubeUrl(language: Language) {

@@ -36,17 +36,33 @@ const views: View[] = [
   { name: 'overview-member', session: 'member', records: 'ok', tab: 'overview' },
   { name: 'overview-empty', session: 'member', records: 'empty', tab: 'overview' },
   { name: 'my-journey', session: 'leader', records: 'ok', tab: 'my-journey' },
-  { name: 'my-journey-editing', session: 'leader', records: 'ok', tab: 'my-journey', open: 'journey-editor' },
+  {
+    name: 'my-journey-editing',
+    session: 'leader',
+    records: 'ok',
+    tab: 'my-journey',
+    open: 'journey-editor',
+  },
   { name: 'my-journey-empty', session: 'member', records: 'empty', tab: 'my-journey' },
   { name: 'prayer-list', session: 'leader', records: 'ok', tab: 'prayer-list' },
-  { name: 'prayer-list-editing', session: 'leader', records: 'ok', tab: 'prayer-list', open: 'prayer-editor' },
+  {
+    name: 'prayer-list-editing',
+    session: 'leader',
+    records: 'ok',
+    tab: 'prayer-list',
+    open: 'prayer-editor',
+  },
   { name: 'prayer-list-empty', session: 'member', records: 'empty', tab: 'prayer-list' },
   { name: 'record', session: 'leader', records: 'ok', tab: 'record' },
   { name: 'team', session: 'leader', records: 'ok', tab: 'team' },
 ]
 
 const states: State[] = views.flatMap((view) =>
-  (['en', 'ko'] as const).map((language) => ({ ...view, name: `${view.name} (${language})`, language })),
+  (['en', 'ko'] as const).map((language) => ({
+    ...view,
+    name: `${view.name} (${language})`,
+    language,
+  })),
 )
 
 function snapshotFor(session: Session, records: Records | undefined) {
@@ -60,7 +76,9 @@ function snapshotFor(session: Session, records: Records | undefined) {
   return {
     totals: fixture.totals,
     mine: fixture.mine,
-    ...(isLeader ? { team: [...fixture.mine, ...fixture.others].sort((first, second) => second.id - first.id) } : {}),
+    ...(isLeader
+      ? { team: [...fixture.mine, ...fixture.others].sort((first, second) => second.id - first.id) }
+      : {}),
     prayers: isLeader ? [...fixture.prayers, ...fixture.otherPrayers] : fixture.prayers,
     viewer,
   }

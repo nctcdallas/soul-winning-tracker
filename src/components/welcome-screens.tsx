@@ -1,7 +1,6 @@
 import { useLanguage } from '#/i18n/language'
 import { useSession } from '#/session/session'
 
-/** Tells a member who signed in without Google to sign out and start again. */
 function WrongProviderScreen() {
   const { t } = useLanguage()
   const { signOut } = useSession()
@@ -17,7 +16,6 @@ function WrongProviderScreen() {
   )
 }
 
-/** Shown while a member's records load for the first time. */
 function OpeningScreen() {
   const { t } = useLanguage()
 
@@ -34,7 +32,6 @@ interface UnavailableScreenProps {
   onRetry: () => void
 }
 
-/** Shown when a member's records could not be loaded at all. */
 function UnavailableScreen({ message, onRetry }: UnavailableScreenProps) {
   const { t } = useLanguage()
   const { signOut } = useSession()

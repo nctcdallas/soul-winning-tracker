@@ -3,7 +3,6 @@ import { render } from '@testing-library/react'
 import { vi } from 'vitest'
 import { getRouter } from '#/router'
 
-/** Renders the real route tree, document shell included, with the browser at `path`. */
 function renderApp(path: string) {
   const router = getRouter()
 

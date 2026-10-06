@@ -10,16 +10,17 @@ interface NoticeContextValue {
 
 const NoticeContext = createContext<NoticeContextValue | null>(null)
 
-/** Holds the one message the page shows above its content. */
 function NoticeProvider({ children }: { children: ReactNode }) {
   const [{ notice, noticeAt }, setState] = useState({ notice: '', noticeAt: 0 })
-  const setNotice = useCallback((next: string) => setState({ notice: next, noticeAt: Date.now() }), [])
+  const setNotice = useCallback(
+    (next: string) => setState({ notice: next, noticeAt: Date.now() }),
+    [],
+  )
   const value = useMemo(() => ({ notice, noticeAt, setNotice }), [notice, noticeAt, setNotice])
 
   return <NoticeContext.Provider value={value}>{children}</NoticeContext.Provider>
 }
 
-/** Reads and sets the page notice. */
 function useNotice() {
   const value = useContext(NoticeContext)
 

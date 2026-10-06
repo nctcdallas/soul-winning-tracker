@@ -9,7 +9,6 @@ import { StatusOptions } from './status-options'
 import type { Viewer } from '#/journeys/types'
 import type { FormEvent } from 'react'
 
-/** The form for recording one outreach encounter; saving it opens the member's journey. */
 function RecordTab({ viewer }: { viewer: Viewer }) {
   const { t } = useLanguage()
   const run = useRunMutation()
