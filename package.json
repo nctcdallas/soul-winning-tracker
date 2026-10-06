@@ -13,6 +13,7 @@
     "@netlify/identity": "^2.0.0"
   },
   "devDependencies": {
+    "@netlify/database-dev": "^1.0.1",
     "vite": "^7.0.0"
   },
   "engines": {

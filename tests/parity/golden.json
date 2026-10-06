@@ -1,0 +1,875 @@
+[
+  {
+    "as": "anon",
+    "op": "totals",
+    "body": {
+      "totals": {
+        "reached": 2,
+        "salvations": 0,
+        "healings": 0,
+        "baptisms": 0
+      }
+    }
+  },
+  {
+    "as": "anon",
+    "op": "snapshot",
+    "status": 401,
+    "body": {
+      "error": "Please sign in with Google to continue."
+    }
+  },
+  {
+    "as": "emailUser",
+    "op": "snapshot",
+    "status": 403,
+    "body": {
+      "error": "Please use Continue with Google."
+    }
+  },
+  {
+    "as": "noEmail",
+    "op": "snapshot",
+    "status": 403,
+    "body": {
+      "error": "A verified email address is required."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 2,
+        "salvations": 0,
+        "healings": 0,
+        "baptisms": 0
+      },
+      "mine": [],
+      "prayers": [],
+      "viewer": {
+        "displayName": "bob@example.com",
+        "email": "bob@example.com",
+        "isLeader": false
+      }
+    }
+  },
+  {
+    "as": "bob",
+    "op": "setStatus",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "setStatus",
+    "body": {
+      "saved": true
+    }
+  },
+  {
+    "as": "alice",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 2,
+        "salvations": 0,
+        "healings": 0,
+        "baptisms": 0
+      },
+      "mine": [
+        {
+          "id": 1,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice (legacy)",
+          "soulName": "Legacy Lee",
+          "location": "Dallas",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "interested",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [],
+      "viewer": {
+        "displayName": "Alice",
+        "email": "Alice@Example.com",
+        "isLeader": false
+      }
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "body": {
+      "journey": {
+        "id": 3
+      }
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please check the entry."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "createJourney",
+    "status": 400,
+    "body": {
+      "error": "Please complete the name, location, and outcome choices."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "createJourney",
+    "body": {
+      "journey": {
+        "id": 4
+      }
+    }
+  },
+  {
+    "as": "bob",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 4,
+        "salvations": 1,
+        "healings": 1,
+        "baptisms": 1
+      },
+      "mine": [
+        {
+          "id": 4,
+          "ownerUserId": "user-bob",
+          "recorderEmail": "bob@example.com",
+          "recorderName": "bob@example.com",
+          "soulName": "한나",
+          "location": "Plano, TX",
+          "encounterDate": "2026-10-01",
+          "salvation": false,
+          "salvationStatus": "declined",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": true,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [],
+      "viewer": {
+        "displayName": "bob@example.com",
+        "email": "bob@example.com",
+        "isLeader": false
+      }
+    }
+  },
+  {
+    "as": "bob",
+    "op": "editJourney",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "setStatus",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "deleteJourney",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "addPrayer",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "addPrayer",
+    "body": {
+      "prayer": {
+        "id": 1
+      }
+    }
+  },
+  {
+    "as": "alice",
+    "op": "addPrayer",
+    "status": 400,
+    "body": {
+      "error": "Please enter a prayer request under 1,000 characters."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "addPrayer",
+    "status": 400,
+    "body": {
+      "error": "Please enter a prayer request under 1,000 characters."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "addPrayer",
+    "status": 400,
+    "body": {
+      "error": "Please enter a prayer request under 1,000 characters."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "addPrayer",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "editPrayer",
+    "status": 404,
+    "body": {
+      "error": "Prayer request not found."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "setPrayerStatus",
+    "status": 404,
+    "body": {
+      "error": "Prayer request not found."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "deletePrayer",
+    "status": 404,
+    "body": {
+      "error": "Prayer request not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "setPrayerStatus",
+    "body": {
+      "saved": true
+    }
+  },
+  {
+    "as": "alice",
+    "op": "setPrayerStatus",
+    "status": 400,
+    "body": {
+      "error": "Invalid prayer request."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editPrayer",
+    "body": {
+      "saved": true
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editPrayer",
+    "status": 400,
+    "body": {
+      "error": "Invalid prayer request."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editPrayer",
+    "status": 400,
+    "body": {
+      "error": "Invalid prayer request."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editPrayer",
+    "status": 404,
+    "body": {
+      "error": "Prayer request not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editPrayer",
+    "status": 400,
+    "body": {
+      "error": "Invalid prayer request."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editJourney",
+    "body": {
+      "saved": true
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editJourney",
+    "status": 400,
+    "body": {
+      "error": "Please check the record details and try again."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editJourney",
+    "status": 400,
+    "body": {
+      "error": "Please check the record details and try again."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editJourney",
+    "status": 400,
+    "body": {
+      "error": "Invalid record."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "editJourney",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "setStatus",
+    "status": 400,
+    "body": {
+      "error": "Invalid salvation status."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "setStatus",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 4,
+        "salvations": 0,
+        "healings": 0,
+        "baptisms": 1
+      },
+      "mine": [
+        {
+          "id": 3,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice",
+          "soulName": "Grace L.",
+          "location": "Plano, TX",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "praying",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        },
+        {
+          "id": 1,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice (legacy)",
+          "soulName": "Legacy Lee",
+          "location": "Dallas",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "interested",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [
+        {
+          "id": 1,
+          "journeyId": 3,
+          "requestText": "Updated request",
+          "status": "answered",
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "viewer": {
+        "displayName": "Alice",
+        "email": "Alice@Example.com",
+        "isLeader": false
+      }
+    }
+  },
+  {
+    "as": "admin",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 4,
+        "salvations": 0,
+        "healings": 0,
+        "baptisms": 1
+      },
+      "mine": [],
+      "team": [
+        {
+          "id": 4,
+          "ownerUserId": "user-bob",
+          "recorderEmail": "bob@example.com",
+          "recorderName": "bob@example.com",
+          "soulName": "한나",
+          "location": "Plano, TX",
+          "encounterDate": "2026-10-01",
+          "salvation": false,
+          "salvationStatus": "declined",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": true,
+          "createdAt": "<timestamp>"
+        },
+        {
+          "id": 3,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice",
+          "soulName": "Grace L.",
+          "location": "Plano, TX",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "praying",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        },
+        {
+          "id": 2,
+          "ownerUserId": null,
+          "recorderEmail": "carol@example.com",
+          "recorderName": "Carol",
+          "soulName": "Unclaimed Uma",
+          "location": "Seoul",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "declined",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        },
+        {
+          "id": 1,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice (legacy)",
+          "soulName": "Legacy Lee",
+          "location": "Dallas",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "interested",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [
+        {
+          "id": 1,
+          "journeyId": 3,
+          "requestText": "Updated request",
+          "status": "answered",
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "viewer": {
+        "displayName": "Admin",
+        "email": "admin@nctc.test",
+        "isLeader": true
+      }
+    }
+  },
+  {
+    "as": "admin",
+    "op": "editPrayer",
+    "body": {
+      "saved": true
+    }
+  },
+  {
+    "as": "admin",
+    "op": "setStatus",
+    "body": {
+      "saved": true
+    }
+  },
+  {
+    "as": "admin",
+    "op": "editJourney",
+    "body": {
+      "saved": true
+    }
+  },
+  {
+    "as": "bob",
+    "op": "addPrayer",
+    "body": {
+      "prayer": {
+        "id": 2
+      }
+    }
+  },
+  {
+    "as": "alice",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 4,
+        "salvations": 2,
+        "healings": 0,
+        "baptisms": 1
+      },
+      "mine": [
+        {
+          "id": 3,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice",
+          "soulName": "Grace L.",
+          "location": "Plano, TX",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "praying",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        },
+        {
+          "id": 1,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice (legacy)",
+          "soulName": "Legacy Lee",
+          "location": "Dallas",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "interested",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [
+        {
+          "id": 1,
+          "journeyId": 3,
+          "requestText": "Admin edit",
+          "status": "answered",
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "viewer": {
+        "displayName": "Alice",
+        "email": "Alice@Example.com",
+        "isLeader": false
+      }
+    }
+  },
+  {
+    "as": "alice",
+    "op": "deleteJourney",
+    "body": {
+      "deleted": true
+    }
+  },
+  {
+    "as": "alice",
+    "op": "deleteJourney",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "deleteJourney",
+    "status": 404,
+    "body": {
+      "error": "Record not found."
+    }
+  },
+  {
+    "as": "alice",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 3,
+        "salvations": 2,
+        "healings": 0,
+        "baptisms": 1
+      },
+      "mine": [
+        {
+          "id": 1,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice (legacy)",
+          "soulName": "Legacy Lee",
+          "location": "Dallas",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "interested",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [],
+      "viewer": {
+        "displayName": "Alice",
+        "email": "Alice@Example.com",
+        "isLeader": false
+      }
+    }
+  },
+  {
+    "as": "bob",
+    "op": "deletePrayer",
+    "body": {
+      "deleted": true
+    }
+  },
+  {
+    "as": "bob",
+    "op": "deletePrayer",
+    "status": 404,
+    "body": {
+      "error": "Prayer request not found."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "deletePrayer",
+    "status": 400,
+    "body": {
+      "error": "Invalid prayer request."
+    }
+  },
+  {
+    "as": "bob",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 3,
+        "salvations": 2,
+        "healings": 0,
+        "baptisms": 1
+      },
+      "mine": [
+        {
+          "id": 4,
+          "ownerUserId": "user-bob",
+          "recorderEmail": "bob@example.com",
+          "recorderName": "bob@example.com",
+          "soulName": "한나",
+          "location": "Plano, TX",
+          "encounterDate": "2026-10-01",
+          "salvation": true,
+          "salvationStatus": "saved",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": true,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [],
+      "viewer": {
+        "displayName": "bob@example.com",
+        "email": "bob@example.com",
+        "isLeader": false
+      }
+    }
+  },
+  {
+    "as": "anon",
+    "op": "totals",
+    "body": {
+      "totals": {
+        "reached": 3,
+        "salvations": 2,
+        "healings": 0,
+        "baptisms": 1
+      }
+    }
+  },
+  {
+    "as": "admin",
+    "op": "snapshot",
+    "body": {
+      "totals": {
+        "reached": 3,
+        "salvations": 2,
+        "healings": 0,
+        "baptisms": 1
+      },
+      "mine": [],
+      "team": [
+        {
+          "id": 4,
+          "ownerUserId": "user-bob",
+          "recorderEmail": "bob@example.com",
+          "recorderName": "bob@example.com",
+          "soulName": "한나",
+          "location": "Plano, TX",
+          "encounterDate": "2026-10-01",
+          "salvation": true,
+          "salvationStatus": "saved",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": true,
+          "createdAt": "<timestamp>"
+        },
+        {
+          "id": 2,
+          "ownerUserId": null,
+          "recorderEmail": "carol@example.com",
+          "recorderName": "Carol",
+          "soulName": "Uma",
+          "location": "Plano, TX",
+          "encounterDate": "2026-10-01",
+          "salvation": true,
+          "salvationStatus": "saved",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        },
+        {
+          "id": 1,
+          "ownerUserId": "user-alice",
+          "recorderEmail": "alice@example.com",
+          "recorderName": "Alice (legacy)",
+          "soulName": "Legacy Lee",
+          "location": "Dallas",
+          "encounterDate": null,
+          "salvation": false,
+          "salvationStatus": "interested",
+          "healing": false,
+          "healingDetails": null,
+          "holySpiritBaptism": false,
+          "createdAt": "<timestamp>"
+        }
+      ],
+      "prayers": [],
+      "viewer": {
+        "displayName": "Admin",
+        "email": "admin@nctc.test",
+        "isLeader": true
+      }
+    }
+  }
+]
