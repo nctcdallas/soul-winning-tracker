@@ -72,45 +72,45 @@ const getPublicTotals = createServerFn({ method: "GET" }).handler(
 const getSnapshot = createServerFn({ method: "GET" }).handler(() => asMember(snapshot));
 
 const createJourneyFn = createServerFn({ method: "POST" })
-  .inputValidator((input: JourneyInput) => input)
+  .validator((input: JourneyInput) => input)
   .handler(({ data }) => asMember((sql, member) => createJourney(sql, member, data)));
 
 const editJourneyFn = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: number; journey: JourneyInput }) => input)
+  .validator((input: { id: number; journey: JourneyInput }) => input)
   .handler(({ data }) =>
     asMember((sql, member) => editJourney(sql, member, data.id, data.journey)),
   );
 
 const setSalvationStatusFn = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: number; salvationStatus: SalvationStatus }) => input)
+  .validator((input: { id: number; salvationStatus: SalvationStatus }) => input)
   .handler(({ data }) =>
     asMember((sql, member) => setSalvationStatus(sql, member, data.id, data.salvationStatus)),
   );
 
 const deleteJourneyFn = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: number }) => input)
+  .validator((input: { id: number }) => input)
   .handler(({ data }) => asMember((sql, member) => deleteJourney(sql, member, data.id)));
 
 const addPrayerFn = createServerFn({ method: "POST" })
-  .inputValidator((input: { journeyId: number; requestText: string }) => input)
+  .validator((input: { journeyId: number; requestText: string }) => input)
   .handler(({ data }) =>
     asMember((sql, member) => addPrayer(sql, member, data.journeyId, data.requestText)),
   );
 
 const editPrayerFn = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: number; requestText: string }) => input)
+  .validator((input: { id: number; requestText: string }) => input)
   .handler(({ data }) =>
     asMember((sql, member) => editPrayer(sql, member, data.id, data.requestText)),
   );
 
 const setPrayerStatusFn = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: number; status: PrayerStatus }) => input)
+  .validator((input: { id: number; status: PrayerStatus }) => input)
   .handler(({ data }) =>
     asMember((sql, member) => setPrayerStatus(sql, member, data.id, data.status)),
   );
 
 const deletePrayerFn = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: number }) => input)
+  .validator((input: { id: number }) => input)
   .handler(({ data }) => asMember((sql, member) => deletePrayer(sql, member, data.id)));
 
 const getSessionHint = createServerFn({ method: "GET" }).handler(
