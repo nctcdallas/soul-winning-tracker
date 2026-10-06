@@ -1,17 +1,18 @@
 import { useLanguage } from '#/i18n/language'
 import { useSession } from '#/session/session'
+import { Button } from '#/ui/button'
+import { Skeleton } from '#/ui/skeleton'
+import { TextAction } from '#/ui/text-action'
 
 function WrongProviderScreen() {
   const { t } = useLanguage()
   const { signOut } = useSession()
 
   return (
-    <section className="welcome">
-      <h1>{t('Google sign-in required')}</h1>
-      <p>{t('Please sign out and choose Continue with Google.')}</p>
-      <button type="button" className="primary-button" onClick={() => void signOut()}>
-        {t('Sign out')}
-      </button>
+    <section className="gate">
+      <h1 className="page-title">{t('Google sign-in required')}</h1>
+      <p className="lede">{t('Please sign out and choose Continue with Google.')}</p>
+      <Button onClick={() => void signOut()}>{t('Sign out')}</Button>
     </section>
   )
 }
@@ -20,9 +21,10 @@ function OpeningScreen() {
   const { t } = useLanguage()
 
   return (
-    <section className="welcome">
-      <h1>{t('Opening your journey…')}</h1>
-      <p>{t('Checking your records.')}</p>
+    <section className="gate">
+      <h1 className="page-title">{t('Opening your journey…')}</h1>
+      <p className="lede">{t('Checking your records.')}</p>
+      <Skeleton lines={3} />
     </section>
   )
 }
@@ -37,16 +39,12 @@ function UnavailableScreen({ message, onRetry }: UnavailableScreenProps) {
   const { signOut } = useSession()
 
   return (
-    <section className="welcome">
-      <h1>{t('We couldn’t open your journey.')}</h1>
-      <p>{t(message)}</p>
-      <div className="error-actions">
-        <button type="button" className="primary-button" onClick={onRetry}>
-          {t('Try again')}
-        </button>
-        <button type="button" className="text-button" onClick={() => void signOut()}>
-          {t('Sign out')}
-        </button>
+    <section className="gate">
+      <h1 className="page-title">{t('We couldn’t open your journey.')}</h1>
+      <p className="lede">{t(message)}</p>
+      <div className="action-row">
+        <Button onClick={onRetry}>{t('Try again')}</Button>
+        <TextAction onClick={() => void signOut()}>{t('Sign out')}</TextAction>
       </div>
     </section>
   )

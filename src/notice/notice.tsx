@@ -1,22 +1,34 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-interface NoticeContextValue {
-  notice: string
+type NoticeTone = 'success' | 'error'
+
+interface Notice {
+  text: string
+  tone: NoticeTone
   /** When the notice was set, in epoch milliseconds, so a later poll result can replace it. */
-  noticeAt: number
-  setNotice: (notice: string) => void
+  at: number
+}
+
+interface NoticeContextValue {
+  notice: Notice | null
+  showNotice: (text: string, tone: NoticeTone) => void
+  clearNotice: () => void
 }
 
 const NoticeContext = createContext<NoticeContextValue | null>(null)
 
 function NoticeProvider({ children }: { children: ReactNode }) {
-  const [{ notice, noticeAt }, setState] = useState({ notice: '', noticeAt: 0 })
-  const setNotice = useCallback(
-    (next: string) => setState({ notice: next, noticeAt: Date.now() }),
+  const [notice, setNotice] = useState<Notice | null>(null)
+  const showNotice = useCallback(
+    (text: string, tone: NoticeTone) => setNotice({ text, tone, at: Date.now() }),
     [],
   )
-  const value = useMemo(() => ({ notice, noticeAt, setNotice }), [notice, noticeAt, setNotice])
+  const clearNotice = useCallback(() => setNotice(null), [])
+  const value = useMemo(
+    () => ({ notice, showNotice, clearNotice }),
+    [notice, showNotice, clearNotice],
+  )
 
   return <NoticeContext.Provider value={value}>{children}</NoticeContext.Provider>
 }
@@ -32,3 +44,4 @@ function useNotice() {
 }
 
 export { NoticeProvider, useNotice }
+export type { NoticeTone }

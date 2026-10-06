@@ -6,14 +6,14 @@ import type { TabPath } from './nav-tabs'
 /** Returns a function that switches tab and drops the notice left by the previous one. */
 function useOpenTab() {
   const navigate = useNavigate()
-  const { setNotice } = useNotice()
+  const { clearNotice } = useNotice()
 
   return useCallback(
     (path: TabPath) => {
-      setNotice('')
+      clearNotice()
       void navigate({ to: path })
     },
-    [navigate, setNotice],
+    [navigate, clearNotice],
   )
 }
 

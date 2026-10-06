@@ -1,0 +1,681 @@
+.site-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 16px;
+  padding: 8px var(--page-inline);
+  background: rgba(247, 244, 238, 0.92);
+  box-shadow: var(--shadow-nav);
+  backdrop-filter: blur(16px);
+}
+
+.app-header-brand {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 44px;
+}
+
+.app-header-product {
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.app-header-account {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-header-user {
+  display: none;
+  overflow: hidden;
+  max-width: 20ch;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The nav row bleeds to the screen edges so a scrolled item is not cut at the gutter. */
+.app-header-nav {
+  display: flex;
+  flex: none;
+  order: 3;
+  justify-content: space-between;
+  gap: 12px;
+  overflow-x: auto;
+  width: calc(100% + 2 * var(--page-gutter));
+  margin: 0 calc(-1 * var(--page-gutter)) -8px;
+  padding-inline: var(--page-gutter);
+  scroll-padding-inline: var(--page-gutter);
+  scrollbar-width: none;
+}
+
+.app-header-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.page {
+  flex: 1;
+  width: 100%;
+  padding: 40px var(--page-inline) 80px;
+}
+
+.page > .notice {
+  margin-bottom: 24px;
+}
+
+.app-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px var(--page-inline);
+  border-top: 1px solid var(--border-hairline);
+  color: var(--text-secondary);
+  font-size: var(--size-body-s);
+  line-height: 1.5;
+}
+
+.app-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+
+.app-footer-links > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: var(--weight-semibold);
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: var(--size-head-l);
+  font-weight: var(--weight-semibold);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-head);
+  text-wrap: balance;
+}
+
+.display-title {
+  max-width: var(--measure-display);
+  font-family: var(--font-display);
+  font-size: var(--size-display-s);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+.head-title {
+  font-family: var(--font-display);
+  font-size: var(--size-head-m);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-head);
+  letter-spacing: var(--tracking-head);
+  text-wrap: balance;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--size-head-s);
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-head);
+}
+
+.lede {
+  max-width: 46ch;
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+  text-wrap: pretty;
+}
+
+.body-copy {
+  max-width: var(--measure-prose);
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+.meta,
+.fine-print {
+  color: var(--text-secondary);
+  font-size: var(--size-body-s);
+  line-height: 1.5;
+}
+
+.fine-print {
+  max-width: var(--measure-prose);
+  margin-top: 16px;
+}
+
+html[lang='ko'] :is(.page-title, .display-title, .head-title) {
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.page-head {
+  display: grid;
+  gap: 28px;
+}
+
+.page-head .page-title {
+  margin-top: 20px;
+}
+
+.page-head .lede {
+  margin-top: 16px;
+}
+
+.section {
+  margin-top: 48px;
+}
+
+.section > .section-title {
+  margin-bottom: 16px;
+}
+
+.section > .ui-eyebrow + .section-title {
+  margin-top: 12px;
+}
+
+.totals,
+.stat-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.totals > .ui-stat-hero {
+  margin-bottom: 8px;
+}
+
+.card-list {
+  display: grid;
+  align-items: start;
+  gap: 20px;
+}
+
+.public > * + * {
+  margin-top: 64px;
+}
+
+.public-head {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.signin {
+  display: grid;
+  gap: 24px;
+}
+
+.signin .body-copy {
+  margin-top: 12px;
+}
+
+.mission .display-title {
+  margin-top: 24px;
+}
+
+.mission .lede {
+  max-width: 54ch;
+  margin-top: 24px;
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.link-row > .ui-button {
+  flex: 1 1 auto;
+}
+
+.text-panel > .body-copy {
+  margin-top: 12px;
+}
+
+.text-panel > .ui-button {
+  margin-top: 20px;
+}
+
+.record-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.record-head > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.record-name {
+  font-family: var(--font-display);
+  font-size: var(--size-head-s);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-head);
+  overflow-wrap: anywhere;
+}
+
+.record-head .meta {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.record-count {
+  flex: none;
+  white-space: nowrap;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 20px;
+}
+
+.record > .action-row {
+  margin-top: 8px;
+}
+
+.record-editor {
+  display: grid;
+  gap: 24px;
+  margin-top: 12px;
+  padding: 24px 0;
+  border-block: 1px solid var(--border-hairline);
+}
+
+/* The editor has its own response field, so the card hides the second one but keeps it in the document. */
+.record:has(.record-editor) > .record-status {
+  display: none;
+}
+
+.record-editor > .ui-button {
+  justify-self: start;
+}
+
+.record-status {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge-row:empty {
+  display: none;
+}
+
+.record-healing {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.prayers {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.record > .prayers {
+  padding-top: 20px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.prayers-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.prayer-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 24px;
+  padding: 14px 18px 4px;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+}
+
+.prayer-text {
+  flex: 1 1 260px;
+  min-width: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+  white-space: pre-wrap;
+}
+
+.prayer-item-answered > .prayer-text {
+  color: var(--text-secondary);
+}
+
+.prayer-prompt {
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--bone-200);
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.prayer-editor {
+  padding: 14px 18px 12px;
+  border: 1px solid var(--crimson-500);
+  border-radius: var(--radius-sm);
+}
+
+.prayer-editor > .action-row {
+  margin-top: 12px;
+}
+
+.inline-add {
+  margin-top: 10px;
+}
+
+.inline-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+}
+
+/* The input takes nearly all the free space on a shared line, and the button fills its own line when it wraps. */
+.inline-add-row > .ui-input {
+  flex: 999 1 160px;
+  width: auto;
+}
+
+.inline-add-row > .ui-button {
+  flex: 1 0 auto;
+}
+
+.record-form {
+  display: grid;
+  gap: 24px;
+  max-width: 760px;
+  margin-top: 40px;
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: var(--size-head-s);
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-head);
+}
+
+.step-title ~ .step-title {
+  margin-top: 8px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.form-grid,
+.check-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.check-grid {
+  gap: 12px;
+}
+
+.record-form-foot {
+  display: grid;
+  gap: 20px;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.recent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.recent-row:last-child {
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.recent-row > div {
+  min-width: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.recent-row .meta {
+  margin-top: 2px;
+}
+
+.recent-empty {
+  padding-top: 16px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.gate {
+  max-width: 46ch;
+}
+
+.gate > .lede {
+  margin-top: 16px;
+}
+
+.gate > .ui-skeleton,
+.gate > .action-row,
+.gate > .ui-button {
+  margin-top: 32px;
+}
+
+.gate > .action-row {
+  gap: 8px 24px;
+}
+
+html[lang='ko'] :is(.page-title, .display-title, .head-title) {
+  text-wrap: pretty;
+}
+
+@media (max-width: 749.98px) {
+  .record-form {
+    padding: 0;
+    border: 0;
+  }
+
+  .record-form > .ui-callout {
+    padding: 0;
+    background: none;
+    color: var(--text-secondary);
+  }
+}
+
+@media (min-width: 600px) {
+  .app-header-user {
+    display: block;
+  }
+
+  .app-header-nav {
+    justify-content: flex-start;
+    gap: 28px;
+  }
+
+  .totals,
+  .stat-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  /* A tile that cannot hold its longest word or its figure moves to the next line and never overflows. */
+  .totals > .ui-stat,
+  .stat-row > .ui-stat {
+    flex: 1 1 0;
+    min-width: min-content;
+  }
+
+  .totals > .ui-stat-hero {
+    flex: 1 0 100%;
+    margin-bottom: 0;
+  }
+
+  .app-header-account {
+    gap: 20px;
+  }
+
+  .totals,
+  .stat-row {
+    gap: 16px;
+  }
+
+  .form-grid,
+  .check-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-grid > .form-grid-wide {
+    grid-column: 1 / -1;
+  }
+
+  .link-row > .ui-button {
+    flex: none;
+  }
+
+  .record-form-foot {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 32px;
+  }
+
+}
+
+@media (min-width: 750px) {
+  .page {
+    padding-top: 64px;
+    padding-bottom: 128px;
+  }
+
+  .page-title {
+    font-size: var(--size-display-s);
+    font-weight: var(--weight-display);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-display);
+  }
+
+  .display-title {
+    font-size: var(--size-display-m);
+  }
+
+  .lede {
+    font-size: var(--size-body-l);
+  }
+
+  .page-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 56px;
+  }
+
+  .section {
+    margin-top: 64px;
+  }
+
+  .public > * + * {
+    margin-top: 96px;
+  }
+
+  .signin {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .app-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .prayer-item {
+    padding-bottom: 14px;
+  }
+}
+
+@media (min-width: 900px) {
+  .totals {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr 1fr 1fr;
+  }
+}
+
+@media (min-width: 960px) {
+  .card-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-header {
+    gap: 14px 40px;
+    padding-block: 16px;
+  }
+
+  .app-header-brand {
+    flex: none;
+    gap: 14px;
+    min-height: 0;
+    margin-right: auto;
+  }
+
+  .app-header-product {
+    white-space: nowrap;
+  }
+
+  .app-header-nav {
+    order: 0;
+    gap: 28px;
+    overflow: visible;
+    width: auto;
+    margin: 0;
+    padding: 0;
+  }
+}

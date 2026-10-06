@@ -1,85 +1,84 @@
 import { useRouterState } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
 import { useLanguage } from '#/i18n/language'
 import { youtubeUrl } from '#/i18n/translate'
 import { useNotice } from '#/notice/notice'
 import { useSnapshot } from '#/queries/use-snapshot'
 import { useSession } from '#/session/session'
+import { LanguageToggle } from '#/ui/language-toggle'
+import { Logo } from '#/ui/logo'
+import { NavItem } from '#/ui/nav-item'
+import { Notice } from '#/ui/notice'
+import { TextAction } from '#/ui/text-action'
 import { NAV_TABS } from './nav-tabs'
-import { useOpenTab } from './use-open-tab'
+import type { NoticeTone } from '#/notice/notice'
 import type { ReactNode } from 'react'
 
+interface Message {
+  text: string
+  tone: NoticeTone
+}
+
 function SiteShell({ children }: { children: ReactNode }) {
-  const { language, t, toggleLanguage } = useLanguage()
-  const { notice, noticeAt } = useNotice()
+  const { language, t } = useLanguage()
+  const { notice, clearNotice } = useNotice()
   const { session, signOut } = useSession()
   const snapshot = useSnapshot()
-  const openTab = useOpenTab()
   const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const nav = useRef<HTMLElement>(null)
   const viewer = snapshot.data?.viewer
-  const pollError = snapshot.data && snapshot.isError ? snapshot.error.message : ''
-  const message =
-    notice !== '' && noticeAt >= Math.max(snapshot.dataUpdatedAt, snapshot.errorUpdatedAt)
+  const pollError: Message | null =
+    snapshot.data && snapshot.isError ? { text: snapshot.error.message, tone: 'error' } : null
+  const message: Message | null =
+    notice && notice.at >= Math.max(snapshot.dataUpdatedAt, snapshot.errorUpdatedAt)
       ? notice
       : pollError
-  const noticeVisible =
-    message !== '' && (snapshot.data || session.kind === 'anon' || session.kind === 'loading')
-  const toggleLabel = language === 'ko' ? '영어로 보기' : '한국어로 보기'
+  const noticeVisible = snapshot.data || session.kind === 'anon' || session.kind === 'loading'
+
+  useEffect(() => {
+    // jsdom has no scrollIntoView, so the call is optional.
+    nav.current
+      ?.querySelector('[aria-current="page"]')
+      ?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })
+  }, [pathname, viewer])
 
   return (
     <div className="site-shell">
-      <header className="topbar">
-        <div className="brand">
-          <img className="brand-logo" src="/nctc-logo.png" alt={t('NCTC logo')} />
-          <span>{t('Soul Winning Journey')}</span>
+      <header className="app-header">
+        <div className="app-header-brand">
+          <Logo alt={t('NCTC logo')} />
+          <span className="app-header-product">{t('Soul Winning Journey')}</span>
         </div>
         {viewer && (
-          <>
-            <nav aria-label={t('Main navigation')} className="nav">
-              {NAV_TABS.filter((tab) => !tab.leaderOnly || viewer.isLeader).map((tab) => (
-                <button
-                  type="button"
-                  key={tab.path}
-                  className={pathname === tab.path ? 'active' : undefined}
-                  onClick={() => openTab(tab.path)}
-                >
-                  {t(tab.label)}
-                </button>
-              ))}
-            </nav>
-            <div className="account">
-              <span>{viewer.displayName}</span>
-              <button type="button" onClick={() => void signOut()}>
-                {t('Sign out')}
-              </button>
-            </div>
-          </>
+          <nav ref={nav} aria-label={t('Main navigation')} className="app-header-nav">
+            {NAV_TABS.filter((tab) => !tab.leaderOnly || viewer.isLeader).map((tab) => (
+              <NavItem key={tab.path} to={tab.path} onClick={clearNotice}>
+                {t(tab.label)}
+              </NavItem>
+            ))}
+          </nav>
         )}
-        <button
-          type="button"
-          className="language-toggle"
-          aria-label={toggleLabel}
-          title={toggleLabel}
-          onClick={toggleLanguage}
-        >
-          <span aria-hidden="true">{language === 'ko' ? '🇺🇸' : '🇰🇷'}</span>{' '}
-          {language === 'ko' ? 'EN' : '한국어'}
-        </button>
+        <div className="app-header-account">
+          {viewer && (
+            <>
+              <span className="app-header-user">{viewer.displayName}</span>
+              <TextAction onClick={() => void signOut()}>{t('Sign out')}</TextAction>
+            </>
+          )}
+          <LanguageToggle />
+        </div>
       </header>
-      <main className="page-content">
-        {noticeVisible && (
-          <p className="notice" role="status">
-            {t(message)}
-          </p>
-        )}
+      <main className="page">
+        {message && noticeVisible && <Notice tone={message.tone}>{t(message.text)}</Notice>}
         {children}
       </main>
-      <footer>
+      <footer className="app-footer">
         <span>
           {t(
             'New Creation Training Center · Training new creations, raising end-time soul winners.',
           )}
         </span>
-        <span className="footer-links">
+        <span className="app-footer-links">
           <a href="https://www.nctcdallas.org/" target="_blank" rel="noopener noreferrer">
             {t('About NCTC')}
           </a>

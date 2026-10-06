@@ -16,7 +16,7 @@ const REQUEST_FAILED = 'The request could not be completed.'
  */
 function useRunMutation() {
   const queryClient = useQueryClient()
-  const { setNotice } = useNotice()
+  const { showNotice } = useNotice()
   const mutation = useMutation({
     mutationKey: MUTATION_KEY,
     mutationFn: async (action: Action) => {
@@ -38,16 +38,16 @@ function useRunMutation() {
 
       try {
         await mutation.mutateAsync(action)
-        setNotice(success)
+        showNotice(success, 'success')
 
         return true
       } catch (error) {
-        setNotice(error instanceof Error ? error.message : REQUEST_FAILED)
+        showNotice(error instanceof Error ? error.message : REQUEST_FAILED, 'error')
 
         return false
       }
     },
-    [mutation, queryClient, setNotice],
+    [mutation, queryClient, showNotice],
   )
 }
 

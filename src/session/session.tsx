@@ -33,7 +33,7 @@ function sessionOf(user: User | null): SessionState {
 
 function SessionProvider({ initial, children }: { initial: SessionState; children: ReactNode }) {
   const queryClient = useQueryClient()
-  const { setNotice } = useNotice()
+  const { showNotice } = useNotice()
   const [session, setSession] = useState(initial)
 
   useEffect(() => {
@@ -43,8 +43,9 @@ function SessionProvider({ initial, children }: { initial: SessionState; childre
       try {
         await handleAuthCallback()
       } catch (error) {
-        setNotice(
+        showNotice(
           error instanceof Error && error.message ? error.message : 'Could not complete sign-in.',
+          'error',
         )
       }
 
@@ -60,7 +61,7 @@ function SessionProvider({ initial, children }: { initial: SessionState; childre
     return () => {
       cancelled = true
     }
-  }, [setNotice])
+  }, [showNotice])
 
   const signOut = useCallback(async () => {
     await logout()

@@ -114,14 +114,7 @@ function prayersOf(person: Journey, prayers: Prayer[]) {
   }
 }
 
-function countLabel(totals: Totals | undefined, key: keyof Totals, language: Language) {
-  const value = totals ? Number(totals[key]) : Number.NaN
-
-  return Number.isFinite(value) ? value.toLocaleString(localeOf(language)) : '—'
-}
-
 export {
-  countLabel,
   dateOf,
   encounterDateOf,
   encounterISO,

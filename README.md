@@ -4,7 +4,7 @@ This is the Netlify-ready version of the journey tracker. It is a TanStack Start
 
 The record rules are in `src/server/records.ts`. `pnpm test` runs them against an in-memory database and compares each outcome with the recorded outcomes of the earlier API function (`tests/parity/golden.json`).
 
-The header uses the supplied NCTC monogram (`public/nctc-logo.png`), with a warm ember-red and orange visual theme. The logo is bundled locally with the site; no external image link is required.
+The interface follows the NCTC Dallas design system: warm bone paper, ink type, and crimson for the one main action of a screen. The header uses the official NCTC monogram (`public/logo-monogram-ink.svg`). The logo is bundled locally with the site; no external image link is required.
 
 ## Update the existing NCTC project
 
@@ -21,8 +21,8 @@ The browser error `DNS_PROBE_FINISHED_NXDOMAIN` means the new name is not resolv
 - The admin sees all records, prayer requests, and outcome totals.
 - Anyone with a Google account can join without approval. Members can record and correct encounter details, response to the gospel, healing details, Holy Spirit baptism, and prayer requests. They can remove their own entries; removing an encounter also removes its prayer requests. Only "Chose to receive Jesus" contributes to the salvation total.
 - The totals refresh every five seconds while the page is open.
-- The header offers English and Korean (🇰🇷) throughout the public page and member interface. A visitor's choice is remembered in that browser. English links to NCTC's English YouTube channel (`@nctcdallas`); Korean links to its Korean channel (`@nctc2022`). Korean text can be entered in all record and prayer fields; submitted names and details are saved as written, without automatic translation. Both languages contribute to the same totals and database.
-- Korean UI uses the bundled Pretendard Variable font (`public/fonts/PretendardVariable.woff2`), distributed with its SIL Open Font License (`public/fonts/Pretendard-LICENSE.txt`). No external font request is needed.
+- The header offers English and Korean throughout the public page and member interface, with a two-part control that names each language in its own script (`EN`, `한국어`). A visitor's choice is remembered in that browser. English links to NCTC's English YouTube channel (`@nctcdallas`); Korean links to its Korean channel (`@nctc2022`). Korean text can be entered in all record and prayer fields; submitted names and details are saved as written, without automatic translation. Both languages contribute to the same totals and database.
+- Latin text uses the bundled Archivo variable font (`public/fonts/Archivo-latin.woff2`, `public/fonts/Archivo-latin-ext.woff2`) and Korean text uses the bundled Pretendard Variable font (`public/fonts/PretendardVariable.woff2`). Each is distributed with its SIL Open Font License (`public/fonts/Archivo-LICENSE.txt`, `public/fonts/Pretendard-LICENSE.txt`). No external font request is needed.
 - Earlier records with the old `praying` status remain labeled as earlier follow-up records; this update does not reinterpret them as a rejection. New records use `declined`, `interested`, or `saved`.
 - New entries have an editable **Date of encounter**, defaulting to today in the member's browser. The actual encounter date appears beside the location in private records; the separate date of entry remains visible below it. Older records are not automatically assigned an encounter date, because their entry date may differ. Members can add the actual date by editing those records. The included second database migration adds this nullable date field without changing existing records.
 

@@ -33,7 +33,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       {
         name: 'theme-color',
-        content: '#ae321b',
+        content: '#F7F4EE',
       },
       {
         title: DOCUMENT_TITLES[loaderData?.language ?? 'en'],
@@ -48,6 +48,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         rel: 'canonical',
         href: 'https://nctcsoulwinning.org/',
+      },
+      {
+        rel: 'icon',
+        type: 'image/svg+xml',
+        href: '/logo-monogram-ink.svg',
       },
       {
         rel: 'stylesheet',
