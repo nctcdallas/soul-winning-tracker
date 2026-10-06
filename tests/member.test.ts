@@ -14,7 +14,9 @@ test('fetchIdentityUser should send the token to the user endpoint of Netlify Id
     return Response.json({ id: 'user-1' })
   })
 
-  expect(requests).toEqual([{ url: 'https://example.org/.netlify/identity/user', authorization: 'Bearer token-123' }])
+  expect(requests).toEqual([
+    { url: 'https://example.org/.netlify/identity/user', authorization: 'Bearer token-123' },
+  ])
 })
 
 test('fetchIdentityUser should read the id, email, provider, and full name of the account', async () => {
@@ -29,12 +31,20 @@ test('fetchIdentityUser should read the id, email, provider, and full name of th
     }),
   )
 
-  expect(user).toEqual({ id: 'user-1', email: 'Grace@Example.com', name: 'Grace Lee', provider: 'google' })
+  expect(user).toEqual({
+    id: 'user-1',
+    email: 'Grace@Example.com',
+    name: 'Grace Lee',
+    provider: 'google',
+  })
 })
 
 test('fetchIdentityUser should treat a token that Netlify Identity rejects as signed out', async () => {
   expect(await fetchIdentityUser('expired', IDENTITY_URL, answering(401, { code: 401 }))).toBeNull()
-  expect(await fetchIdentityUser('valid', IDENTITY_URL, answering(200, { id: 'user-1' }))).toEqual({ id: 'user-1' })
+  expect(await fetchIdentityUser('deleted', IDENTITY_URL, answering(404, { code: 404 }))).toBeNull()
+  expect(await fetchIdentityUser('valid', IDENTITY_URL, answering(200, { id: 'user-1' }))).toEqual({
+    id: 'user-1',
+  })
 })
 
 test('fetchIdentityUser should not call Netlify Identity when the cookie is missing', async () => {

@@ -1,48 +1,52 @@
-import type { Result } from "#/journeys/types";
+import type { Result } from '#/journeys/types'
 
-/** The fields of a Netlify Identity account that the record rules read. */
 interface IdentityUser {
-  id: string;
-  email?: string;
-  name?: string;
-  provider?: string;
+  id: string
+  email?: string
+  name?: string
+  provider?: string
 }
 
-/** A signed-in Google account with an email address. Only `resolveMember` makes one. */
+/** A signed-in Google account with an email address. */
 interface Member {
-  id: string;
-  email: string;
-  ownerEmail: string;
-  displayName: string;
-  isAdmin: boolean;
+  id: string
+  email: string
+  ownerEmail: string
+  displayName: string
+  isAdmin: boolean
 }
 
-type FetchIdentity = (url: string, init: { headers: Record<string, string> }) => Promise<Response>;
+type FetchIdentity = (
+  url: string,
+  init: { headers: Record<string, string>; signal: AbortSignal },
+) => Promise<Response>
+
+const IDENTITY_TIMEOUT = 5000
 
 const normalizeEmail = (value: unknown) =>
-  String(value ?? "")
+  String(value ?? '')
     .trim()
-    .toLowerCase();
+    .toLowerCase()
 
 function parseAdminEmails(value: string | undefined) {
-  return new Set((value ?? "").split(",").map(normalizeEmail).filter(Boolean));
+  return new Set((value ?? '').split(',').map(normalizeEmail).filter(Boolean))
 }
 
 function resolveMember(user: IdentityUser | null, adminEmails: Set<string>): Result<Member> {
   if (!user) {
-    return { ok: false, status: 401, error: "Please sign in with Google to continue." };
+    return { ok: false, status: 401, error: 'Please sign in with Google to continue.' }
   }
 
   // Netlify Identity still accepts password sign-up at its own endpoint, whatever the UI offers.
-  if (user.provider !== "google") {
-    return { ok: false, status: 403, error: "Please use Continue with Google." };
+  if (user.provider !== 'google') {
+    return { ok: false, status: 403, error: 'Please use Continue with Google.' }
   }
 
   if (!user.email) {
-    return { ok: false, status: 403, error: "A verified email address is required." };
+    return { ok: false, status: 403, error: 'A verified email address is required.' }
   }
 
-  const ownerEmail = normalizeEmail(user.email);
+  const ownerEmail = normalizeEmail(user.email)
 
   return {
     ok: true,
@@ -53,12 +57,12 @@ function resolveMember(user: IdentityUser | null, adminEmails: Set<string>): Res
       displayName: user.name || user.email,
       isAdmin: adminEmails.has(ownerEmail),
     },
-  };
+  }
 }
 
 function parseIdentityUser(raw: unknown): IdentityUser | null {
-  if (!raw || typeof raw !== "object") {
-    return null;
+  if (!raw || typeof raw !== 'object') {
+    return null
   }
 
   const {
@@ -66,22 +70,22 @@ function parseIdentityUser(raw: unknown): IdentityUser | null {
     email,
     app_metadata: appMetadata,
     user_metadata: userMetadata,
-  } = raw as Record<string, unknown>;
+  } = raw as Record<string, unknown>
 
-  if (typeof id !== "string" || !id) {
-    return null;
+  if (typeof id !== 'string' || !id) {
+    return null
   }
 
-  const provider = (appMetadata as Record<string, unknown> | null | undefined)?.provider;
-  const names = (userMetadata ?? {}) as Record<string, unknown>;
-  const name = names.full_name ?? names.name;
+  const provider = (appMetadata as Record<string, unknown> | null | undefined)?.provider
+  const names = (userMetadata ?? {}) as Record<string, unknown>
+  const name = names.full_name ?? names.name
 
   return {
     id,
-    email: typeof email === "string" ? email : undefined,
-    name: typeof name === "string" ? name : undefined,
-    provider: typeof provider === "string" ? provider : undefined,
-  };
+    email: typeof email === 'string' ? email : undefined,
+    name: typeof name === 'string' ? name : undefined,
+    provider: typeof provider === 'string' ? provider : undefined,
+  }
 }
 
 /**
@@ -94,23 +98,24 @@ async function fetchIdentityUser(
   fetchIdentity: FetchIdentity = fetch,
 ): Promise<IdentityUser | null> {
   if (!token) {
-    return null;
+    return null
   }
 
   const response = await fetchIdentity(`${identityUrl}/user`, {
     headers: { Authorization: `Bearer ${token}` },
-  });
+    signal: AbortSignal.timeout(IDENTITY_TIMEOUT),
+  })
 
-  if (response.status === 401) {
-    return null;
+  if (response.status === 401 || response.status === 404) {
+    return null
   }
 
   if (!response.ok) {
-    throw new Error(`Netlify Identity answered ${response.status}`);
+    throw new Error(`Netlify Identity answered ${response.status}`)
   }
 
-  return parseIdentityUser(await response.json());
+  return parseIdentityUser(await response.json())
 }
 
-export { fetchIdentityUser, parseAdminEmails, resolveMember };
-export type { IdentityUser, Member };
+export { fetchIdentityUser, parseAdminEmails, resolveMember }
+export type { IdentityUser, Member }
