@@ -80,6 +80,7 @@ function Stat({ label, value, note, variant = 'default', format = String }: Stat
         'ui-stat',
         variant === 'hero' && 'ui-stat-hero',
         count === undefined && 'ui-stat-pending',
+        count === 0 && 'ui-stat-zero',
       )}
     >
       <span className="ui-stat-label">{label}</span>
