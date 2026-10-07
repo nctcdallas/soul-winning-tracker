@@ -39,6 +39,7 @@ function TotalsGrid({ totals, personal = false }: TotalsGridProps) {
   return (
     <div
       className="totals"
+      role="group"
       aria-label={t(personal ? 'My outreach totals' : 'Live ministry totals')}
     >
       <Stat

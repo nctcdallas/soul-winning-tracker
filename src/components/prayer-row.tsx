@@ -48,7 +48,7 @@ function PrayerRow({ prayer, editing, onEdit }: PrayerRowProps) {
             name="requestText"
             maxLength={1000}
             required
-            rows={3}
+            rows={2}
             defaultValue={prayer.requestText}
           />
         </Field>

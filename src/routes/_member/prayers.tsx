@@ -1,9 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { PrayersTab } from '../../components/prayers-tab'
-import { SnapshotGate } from '../../components/snapshot-gate'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_member/prayers')({ component: PrayersPage })
-
-function PrayersPage() {
-  return <SnapshotGate>{(snapshot) => <PrayersTab snapshot={snapshot} />}</SnapshotGate>
-}
+// The Prayer list page was folded into My journey, and a bookmarked address must still open.
+export const Route = createFileRoute('/_member/prayers')({
+  beforeLoad: () => {
+    throw redirect({ to: '/journey', replace: true })
+  },
+})
