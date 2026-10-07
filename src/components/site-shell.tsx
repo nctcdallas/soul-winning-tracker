@@ -27,12 +27,12 @@ function SiteShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const nav = useRef<HTMLElement>(null)
   const viewer = snapshot.data?.viewer
-  const pollError: Message | null =
+  const refreshError: Message | null =
     snapshot.data && snapshot.isError ? { text: snapshot.error.message, tone: 'error' } : null
   const message: Message | null =
     notice && notice.at >= Math.max(snapshot.dataUpdatedAt, snapshot.errorUpdatedAt)
       ? notice
-      : pollError
+      : refreshError
   const noticeVisible = snapshot.data || session.kind === 'anon' || session.kind === 'loading'
 
   useEffect(() => {
