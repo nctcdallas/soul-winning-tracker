@@ -23,7 +23,8 @@ interface Journey {
   salvation: boolean
   salvationStatus: SalvationStatus
   healing: boolean
-  healingDetails: string | null
+  /** Free text about the encounter. Before October 2026 it held healing details only. */
+  notes: string | null
   holySpiritBaptism: boolean
   createdAt: string
 }
@@ -58,7 +59,7 @@ interface JourneyInput {
   salvationStatus: SalvationStatus
   healing: boolean
   holySpiritBaptism: boolean
-  healingDetails: string
+  notes: string
 }
 
 type FailureStatus = 400 | 401 | 403 | 404 | 503

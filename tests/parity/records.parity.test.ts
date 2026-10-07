@@ -16,7 +16,14 @@ import {
   setSalvationStatus,
   snapshot,
 } from '#/server/records'
-import { ADMIN_EMAILS, actors, maskTimestamps, seedSql, steps } from './scenario'
+import {
+  ADMIN_EMAILS,
+  actors,
+  maskTimestamps,
+  seedSql,
+  steps,
+  withLegacyNames,
+} from './scenario'
 import type { Result } from '#/journeys/types'
 import type { Member } from '#/server/member'
 import type { Sql } from '#/server/records'
@@ -73,17 +80,26 @@ afterAll(async () => {
 
 test.each(steps.map((step, index) => ({ index, ...step })))(
   'step $index: $as $op should match the legacy function',
-  async ({ index, as, op, args = [] }) => {
+  async ({ index, as, op, args = [], legacyAdminWrite }) => {
     const result = await runStep(as, op, args)
 
+    if (legacyAdminWrite) {
+      expect(result).toEqual({ ok: false, status: 404, error: legacyAdminWrite.refusal })
+      await database.exec(legacyAdminWrite.sql)
+
+      return
+    }
+
     expect(
-      maskTimestamps({
-        as,
-        op,
-        ...(result.ok
-          ? { body: result.body }
-          : { status: result.status, body: { error: result.error } }),
-      }),
+      withLegacyNames(
+        maskTimestamps({
+          as,
+          op,
+          ...(result.ok
+            ? { body: result.body }
+            : { status: result.status, body: { error: result.error } }),
+        }),
+      ),
     ).toEqual(legacyOutcomes[index])
   },
 )
