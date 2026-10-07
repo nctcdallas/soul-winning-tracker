@@ -3,18 +3,20 @@ import fixture from './fixture.json' with { type: 'json' }
 type Language = 'en' | 'ko'
 type Session = 'anon' | 'leader' | 'member' | 'email'
 type Records = 'ok' | 'empty' | 'pending' | 'error'
-type Tab = 'overview' | 'my-journey' | 'prayer-list' | 'record' | 'team'
+type Tab = 'overview' | 'my-journey' | 'record' | 'team'
 
 interface View {
   name: string
   session: Session
   records?: Records
   tab?: Tab
-  open?: 'journey-editor' | 'prayer-editor'
+  open?: 'journey-editor'
 }
 
 interface State extends View {
   language: Language
+  /** The name of the view, with no language. */
+  view: string
 }
 
 const RECORDS_ERROR = 'Records are temporarily unavailable. Please try again.'
@@ -22,7 +24,6 @@ const RECORDS_ERROR = 'Records are temporarily unavailable. Please try again.'
 const TAB_PATHS: Record<Tab, string> = {
   overview: '/',
   'my-journey': '/journey',
-  'prayer-list': '/prayers',
   record: '/record',
   team: '/team',
 }
@@ -44,15 +45,6 @@ const views: View[] = [
     open: 'journey-editor',
   },
   { name: 'my-journey-empty', session: 'member', records: 'empty', tab: 'my-journey' },
-  { name: 'prayer-list', session: 'leader', records: 'ok', tab: 'prayer-list' },
-  {
-    name: 'prayer-list-editing',
-    session: 'leader',
-    records: 'ok',
-    tab: 'prayer-list',
-    open: 'prayer-editor',
-  },
-  { name: 'prayer-list-empty', session: 'member', records: 'empty', tab: 'prayer-list' },
   { name: 'record', session: 'leader', records: 'ok', tab: 'record' },
   { name: 'team', session: 'leader', records: 'ok', tab: 'team' },
 ]
@@ -60,6 +52,7 @@ const views: View[] = [
 const states: State[] = views.flatMap((view) =>
   (['en', 'ko'] as const).map((language) => ({
     ...view,
+    view: view.name,
     name: `${view.name} (${language})`,
     language,
   })),
