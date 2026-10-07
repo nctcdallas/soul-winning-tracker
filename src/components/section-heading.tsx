@@ -4,10 +4,11 @@ import { Eyebrow } from '#/ui/eyebrow'
 import { useOpenTab } from './use-open-tab'
 
 interface SectionHeadingProps {
-  eyebrow: string
+  eyebrow?: string
   heading: string
   description: string
-  action?: boolean
+  /** Shows the Record a person button: at the right of the head, or `below` the description. */
+  action?: boolean | 'below'
 }
 
 function SectionHeading({ eyebrow, heading, description, action = false }: SectionHeadingProps) {
@@ -15,9 +16,9 @@ function SectionHeading({ eyebrow, heading, description, action = false }: Secti
   const openTab = useOpenTab()
 
   return (
-    <header className="page-head">
+    <header className={action === 'below' ? 'page-head page-head-stacked' : 'page-head'}>
       <div>
-        <Eyebrow>{t(eyebrow)}</Eyebrow>
+        {eyebrow && <Eyebrow>{t(eyebrow)}</Eyebrow>}
         <h1 className="page-title">{t(heading)}</h1>
         <p className="lede">{t(description)}</p>
       </div>
