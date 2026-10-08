@@ -10,7 +10,7 @@ type SessionState =
   | { kind: 'loading' }
   | { kind: 'anon' }
   | { kind: 'wrong-provider' }
-  | { kind: 'member'; user: User }
+  | { kind: 'member' }
 
 interface SessionContextValue {
   session: SessionState
@@ -19,7 +19,17 @@ interface SessionContextValue {
 
 const SessionContext = createContext<SessionContextValue | null>(null)
 
-function initialSession(hasToken: boolean): SessionState {
+interface SessionHint {
+  hasToken: boolean
+  /** True when the local dev server signs a member in from `DEV_MEMBER_EMAIL`. */
+  devMember: boolean
+}
+
+function initialSession({ hasToken, devMember }: SessionHint): SessionState {
+  if (devMember) {
+    return { kind: 'member' }
+  }
+
   return hasToken ? { kind: 'loading' } : { kind: 'anon' }
 }
 
@@ -28,15 +38,24 @@ function sessionOf(user: User | null): SessionState {
     return { kind: 'anon' }
   }
 
-  return user.provider === 'google' ? { kind: 'member', user } : { kind: 'wrong-provider' }
+  return user.provider === 'google' ? { kind: 'member' } : { kind: 'wrong-provider' }
 }
 
-function SessionProvider({ initial, children }: { initial: SessionState; children: ReactNode }) {
+interface SessionProviderProps {
+  hint: SessionHint
+  children: ReactNode
+}
+
+function SessionProvider({ hint, children }: SessionProviderProps) {
   const queryClient = useQueryClient()
   const { showNotice } = useNotice()
-  const [session, setSession] = useState(initial)
+  const [session, setSession] = useState(() => initialSession(hint))
 
   useEffect(() => {
+    if (hint.devMember) {
+      return
+    }
+
     let cancelled = false
 
     async function resolve() {
@@ -61,7 +80,7 @@ function SessionProvider({ initial, children }: { initial: SessionState; childre
     return () => {
       cancelled = true
     }
-  }, [showNotice])
+  }, [hint.devMember, showNotice])
 
   const signOut = useCallback(async () => {
     await logout()
@@ -83,5 +102,5 @@ function useSession() {
   return value
 }
 
-export { SessionProvider, initialSession, useSession }
+export { SessionProvider, useSession }
 export type { SessionState }

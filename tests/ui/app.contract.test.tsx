@@ -84,6 +84,7 @@ function mockEnvironment(state: State) {
   identity.handleAuthCallback.mockResolvedValue(null)
   server.getSessionHint.mockResolvedValue({
     hasToken: state.session !== 'anon',
+    devMember: false,
     language: state.language,
   })
   server.getPublicTotals.mockResolvedValue({ ok: true, body: { totals: fixture.totals } })

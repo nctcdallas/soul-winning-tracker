@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { fetchIdentityUser } from '#/server/member'
+import { devIdentityUser, fetchIdentityUser } from '#/server/member'
 
 const IDENTITY_URL = 'https://example.org/.netlify/identity'
 
@@ -63,4 +63,22 @@ test('fetchIdentityUser should throw when Netlify Identity cannot answer', async
   await expect(fetchIdentityUser('token-123', IDENTITY_URL, answering(502, {}))).rejects.toThrow(
     'Netlify Identity answered 502',
   )
+})
+
+test('devIdentityUser should give a Google account for the address on a dev server', () => {
+  expect(devIdentityUser(' Grace@Example.com ', true)).toEqual({
+    id: 'dev:grace@example.com',
+    email: 'grace@example.com',
+    name: 'grace@example.com',
+    provider: 'google',
+  })
+})
+
+test('devIdentityUser must give no account in a build, whatever the address', () => {
+  expect(devIdentityUser('grace@example.com', false)).toBeNull()
+})
+
+test('devIdentityUser should give no account when the address is not set', () => {
+  expect(devIdentityUser(undefined, true)).toBeNull()
+  expect(devIdentityUser('  ', true)).toBeNull()
 })

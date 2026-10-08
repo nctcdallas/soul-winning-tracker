@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { getCookie, setResponseHeader } from '@tanstack/react-start/server'
 import { getDatabase } from '@netlify/database'
-import { fetchIdentityUser, parseAdminEmails, resolveMember } from './member'
+import { devIdentityUser, fetchIdentityUser, parseAdminEmails, resolveMember } from './member'
 import {
   addPrayer,
   createJourney,
@@ -22,12 +22,17 @@ import type { Sql } from './records'
 // The browser SDK of Netlify Identity keeps the access token in this cookie.
 const ACCESS_TOKEN_COOKIE = 'nf_jwt'
 
+// Vite replaces `import.meta.env.DEV` with `false` in a build, so a deploy cannot sign in this way.
+const devUser = () => devIdentityUser(process.env.DEV_MEMBER_EMAIL, import.meta.env.DEV)
+
 async function currentMember(): Promise<Result<Member>> {
   try {
-    const user = await fetchIdentityUser(
-      getCookie(ACCESS_TOKEN_COOKIE),
-      new URL('/.netlify/identity', process.env.URL).href,
-    )
+    const user =
+      devUser() ??
+      (await fetchIdentityUser(
+        getCookie(ACCESS_TOKEN_COOKIE),
+        new URL('/.netlify/identity', process.env.URL).href,
+      ))
 
     return resolveMember(user, parseAdminEmails(process.env.ADMIN_EMAILS))
   } catch (error) {
@@ -114,8 +119,9 @@ const deletePrayerFn = createServerFn({ method: 'POST' })
   .handler(({ data }) => asMember((sql, member) => deletePrayer(sql, member, data.id)))
 
 const getSessionHint = createServerFn({ method: 'GET' }).handler(
-  (): { hasToken: boolean; language: 'en' | 'ko' } => ({
+  (): { hasToken: boolean; devMember: boolean; language: 'en' | 'ko' } => ({
     hasToken: Boolean(getCookie(ACCESS_TOKEN_COOKIE)),
+    devMember: devUser() !== null,
     language: getCookie('soul-winning-language') === 'ko' ? 'ko' : 'en',
   }),
 )
