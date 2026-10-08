@@ -157,6 +157,20 @@ test('should open the row of a person on My journey from the overview', async ()
   expect(within(heading).getByRole('button').getAttribute('aria-expanded')).toBe('true')
 })
 
+test('should show the ministry totals before the records of the member on the overview', async () => {
+  start({ path: '/' })
+
+  const totals = await screen.findByRole('heading', { name: 'Ministry totals', level: 2 })
+  const people = screen.getByRole('heading', { name: 'My people', level: 2 })
+
+  expect(totals.compareDocumentPosition(people) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  expect(
+    within(screen.getByRole('group', { name: 'Live ministry totals' })).getByText(
+      `${fixture.mine.length} of them are people you recorded.`,
+    ),
+  ).toBeTruthy()
+})
+
 test('should list the people before the totals on the journey page', async () => {
   start({ path: '/journey' })
 

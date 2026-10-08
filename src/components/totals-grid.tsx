@@ -24,6 +24,8 @@ const SMALL_STATS = [
 interface TotalsGridProps {
   totals: Totals | undefined
   personal?: boolean
+  /** Replaces the note of the hero tile. */
+  note?: string
 }
 
 function countOf(totals: Totals | undefined, key: keyof Totals) {
@@ -32,7 +34,7 @@ function countOf(totals: Totals | undefined, key: keyof Totals) {
   return Number.isFinite(count) ? count : undefined
 }
 
-function TotalsGrid({ totals, personal = false }: TotalsGridProps) {
+function TotalsGrid({ totals, personal = false, note }: TotalsGridProps) {
   const { language, t } = useLanguage()
   const format = (count: number) => count.toLocaleString(localeOf(language))
 
@@ -46,7 +48,7 @@ function TotalsGrid({ totals, personal = false }: TotalsGridProps) {
         variant={personal ? 'hero' : 'fire'}
         label={t(personal ? HERO_STAT.personalLabel : HERO_STAT.publicLabel)}
         value={countOf(totals, HERO_STAT.key)}
-        note={t(personal ? HERO_STAT.personalNote : HERO_STAT.publicNote)}
+        note={note ?? t(personal ? HERO_STAT.personalNote : HERO_STAT.publicNote)}
         format={format}
       />
       {SMALL_STATS.map((stat) => (
