@@ -73,3 +73,42 @@ test('should show a dash until the count is known, then the count with no run fr
   expect(figure()).toBe('128')
   expect(frames).toHaveLength(0)
 })
+
+test('should show the fire only for a fire total with a count above zero', () => {
+  allowMotion(false)
+
+  const { rerender } = render(<Stat variant="fire" label="Reached" value={0} />)
+
+  expect(document.querySelector('.ui-coals')).toBeNull()
+  expect(document.querySelector('.ui-stat-hero')).not.toBeNull()
+
+  rerender(<Stat variant="fire" label="Reached" value={3} />)
+
+  expect(document.querySelector('.ui-stat-fire > canvas.ui-coals')).not.toBeNull()
+
+  rerender(<Stat variant="hero" label="Reached" value={3} />)
+
+  expect(document.querySelector('.ui-coals')).toBeNull()
+})
+
+test('should flare the figure when the count of a fire total goes up, and not when it goes down', () => {
+  allowMotion(false)
+
+  const animate = vi.fn()
+
+  HTMLElement.prototype.animate = animate
+
+  const { rerender } = render(<Stat variant="fire" label="Reached" value={3} />)
+
+  expect(animate).not.toHaveBeenCalled()
+
+  rerender(<Stat variant="fire" label="Reached" value={4} />)
+
+  expect(animate).toHaveBeenCalledTimes(1)
+
+  rerender(<Stat variant="fire" label="Reached" value={2} />)
+
+  expect(animate).toHaveBeenCalledTimes(1)
+
+  Reflect.deleteProperty(HTMLElement.prototype, 'animate')
+})

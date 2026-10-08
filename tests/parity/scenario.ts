@@ -11,6 +11,11 @@ interface Step {
   as: keyof typeof actors
   op: string
   args?: unknown[]
+  /**
+   * For a write that the legacy function let an admin make on the record of a different member.
+   * The app refuses it with `refusal`, and `sql` then makes the same change, so the later steps start from the same data.
+   */
+  legacyAdminWrite?: { refusal: string; sql: string }
 }
 
 const actors: Record<string, Actor | null> = {
@@ -30,6 +35,7 @@ const seedSql = `
   VALUES ${CLAIMABLE_BY_ALICE}, ${OWNED_BY_NOBODY};
 `
 
+// The legacy function dropped the text of a record with no healing. The app now keeps it as notes, so a step with no healing sends no text, and `tests/records.test.ts` covers the difference.
 const journey = (overrides = {}) => ({
   soulName: '  Grace  ',
   location: ' Plano, TX ',
@@ -37,7 +43,7 @@ const journey = (overrides = {}) => ({
   salvationStatus: 'saved',
   healing: true,
   holySpiritBaptism: false,
-  healingDetails: '  Knee pain left.  ',
+  notes: '  Knee pain left.  ',
   ...overrides,
 })
 
@@ -61,7 +67,7 @@ const steps: Step[] = [
   { as: 'alice', op: 'createJourney', args: [journey({ healing: 'yes' })] },
   { as: 'alice', op: 'createJourney', args: [journey({ soulName: 'x'.repeat(101) })] },
   { as: 'alice', op: 'createJourney', args: [journey({ location: 'x'.repeat(161) })] },
-  { as: 'alice', op: 'createJourney', args: [journey({ healingDetails: 'x'.repeat(1001) })] },
+  { as: 'alice', op: 'createJourney', args: [journey({ notes: 'x'.repeat(1001) })] },
   {
     as: 'bob',
     op: 'createJourney',
@@ -71,6 +77,7 @@ const steps: Step[] = [
         salvationStatus: 'declined',
         healing: false,
         holySpiritBaptism: true,
+        notes: '',
       }),
     ],
   },
@@ -109,6 +116,7 @@ const steps: Step[] = [
         encounterDate: '',
         salvationStatus: 'praying',
         healing: false,
+        notes: '',
       }),
     ],
   },
@@ -121,9 +129,35 @@ const steps: Step[] = [
   { as: 'alice', op: 'snapshot' },
 
   { as: 'admin', op: 'snapshot' },
-  { as: 'admin', op: 'editPrayer', args: [1, 'Admin edit'] },
-  { as: 'admin', op: 'setStatus', args: [4, 'saved'] },
-  { as: 'admin', op: 'editJourney', args: [2, journey({ soulName: 'Uma', healing: false })] },
+  {
+    as: 'admin',
+    op: 'editPrayer',
+    args: [1, 'Admin edit'],
+    legacyAdminWrite: {
+      refusal: 'Prayer request not found.',
+      sql: `UPDATE prayer_requests SET request_text = 'Admin edit' WHERE id = 1`,
+    },
+  },
+  {
+    as: 'admin',
+    op: 'setStatus',
+    args: [4, 'saved'],
+    legacyAdminWrite: {
+      refusal: 'Record not found.',
+      sql: `UPDATE journeys SET salvation_status = 'saved', salvation = TRUE WHERE id = 4`,
+    },
+  },
+  {
+    as: 'admin',
+    op: 'editJourney',
+    args: [2, journey({ soulName: 'Uma', healing: false, notes: '' })],
+    legacyAdminWrite: {
+      refusal: 'Record not found.',
+      sql: `UPDATE journeys SET soul_name = 'Uma', location = 'Plano, TX', encounter_date = '2026-10-01',
+        salvation_status = 'saved', salvation = TRUE, healing = FALSE, healing_details = NULL,
+        holy_spirit_baptism = FALSE WHERE id = 2`,
+    },
+  },
 
   { as: 'bob', op: 'addPrayer', args: [4, "Bob's request"] },
   { as: 'alice', op: 'snapshot' },
@@ -155,5 +189,23 @@ function maskTimestamps(value: unknown, key?: string): unknown {
   return key === 'createdAt' ? '<timestamp>' : value
 }
 
-export { ADMIN_EMAILS, actors, maskTimestamps, seedSql, steps }
+/** Gives the notes of each record the name that the legacy function used for the same column. */
+function withLegacyNames(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(withLegacyNames)
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [
+        key === 'notes' ? 'healingDetails' : key,
+        withLegacyNames(entry),
+      ]),
+    )
+  }
+
+  return value
+}
+
+export { ADMIN_EMAILS, actors, maskTimestamps, seedSql, steps, withLegacyNames }
 export type { Actor, Step }

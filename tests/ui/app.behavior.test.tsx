@@ -51,6 +51,12 @@ function start({ path, session = 'member', language = 'en' }: StartOptions) {
 
 async function cardOf(name: string) {
   const heading = await screen.findByRole('heading', { name, level: 3 })
+  const toggle = within(heading).getByRole('button')
+
+  // One row is open at a time, and only an open row has the controls.
+  if (toggle.getAttribute('aria-expanded') === 'false') {
+    fireEvent.click(toggle)
+  }
 
   return within(heading.closest('article')!)
 }
@@ -78,49 +84,110 @@ test('should create a journey from the record form and open the journey tab with
   server.createJourneyFn.mockImplementation(() => succeed())
   start({ path: '/record' })
 
-  const healingDetails = await screen.findByLabelText(/Healing details/)
-
-  expect(healingDetails.closest('label')!.classList.contains('hidden')).toBe(true)
-
-  fill(screen.getByLabelText('Person reached'), 'Dana')
+  fill(await screen.findByLabelText('Person reached'), 'Dana')
   fill(screen.getByLabelText('Location'), 'Frisco')
   fill(screen.getByLabelText('Date of encounter'), '2026-10-01')
   fill(screen.getByLabelText('Response to the gospel'), 'interested')
   fireEvent.click(screen.getByLabelText(/Healing reported/))
-
-  expect(healingDetails.closest('label')!.classList.contains('hidden')).toBe(false)
-
-  fill(healingDetails, 'Back pain left')
+  fill(screen.getByLabelText('Notes (optional)'), 'Back pain left')
+  fill(screen.getByLabelText('Prayer request (optional)'), 'Peace for her family')
   fireEvent.click(screen.getByRole('button', { name: 'Save encounter' }))
 
   await expectNotice(SAVED)
 
   expect(server.createJourneyFn).toHaveBeenCalledWith({
     data: {
-      soulName: 'Dana',
-      location: 'Frisco',
-      encounterDate: '2026-10-01',
-      salvationStatus: 'interested',
-      healing: true,
-      holySpiritBaptism: false,
-      healingDetails: 'Back pain left',
+      journey: {
+        soulName: 'Dana',
+        location: 'Frisco',
+        encounterDate: '2026-10-01',
+        salvationStatus: 'interested',
+        healing: true,
+        holySpiritBaptism: false,
+        notes: 'Back pain left',
+      },
+      requestText: 'Peace for her family',
     },
   })
   expect(await screen.findByRole('heading', { name: 'My journey', level: 1 })).toBeTruthy()
 })
 
-test('should change a salvation status from the card select', async () => {
-  server.setSalvationStatusFn.mockImplementation(() => succeed())
+test('should send an empty prayer request when the prayer field is left blank', async () => {
+  server.createJourneyFn.mockImplementation(() => succeed())
+  start({ path: '/record' })
+
+  fill(await screen.findByLabelText('Person reached'), 'Dana')
+  fill(screen.getByLabelText('Location'), 'Frisco')
+  fireEvent.click(screen.getByRole('button', { name: 'Save encounter' }))
+
+  await expectNotice(SAVED)
+
+  expect(server.createJourneyFn).toHaveBeenCalledWith({
+    data: { journey: expect.objectContaining({ soulName: 'Dana' }), requestText: '' },
+  })
+})
+
+test('should invite a member with no records to record a first person on the overview', async () => {
+  const router = start({ path: '/' })
+
+  records.mine = []
+  records.prayers = []
+
+  fireEvent.click(
+    await within(
+      (await screen.findByRole('heading', { name: 'Record your first person.' })).closest(
+        'section',
+      )!,
+    ).findByRole('button', { name: 'Record a person' }),
+  )
+
+  await waitFor(() => expect(router.state.location.pathname).toBe('/record'))
+  expect(screen.queryByRole('heading', { name: 'My people' })).toBeNull()
+})
+
+test('should open the row of a person on My journey from the overview', async () => {
+  const router = start({ path: '/' })
+
+  fireEvent.click(await screen.findByRole('link', { name: /Dee/ }))
+
+  await waitFor(() => expect(router.state.location.pathname).toBe('/journey'))
+
+  const heading = await screen.findByRole('heading', { name: 'Dee', level: 3 })
+
+  expect(within(heading).getByRole('button').getAttribute('aria-expanded')).toBe('true')
+})
+
+test('should list the people before the totals on the journey page', async () => {
+  start({ path: '/journey' })
+
+  const people = await screen.findByRole('heading', { name: 'People I recorded', level: 2 })
+  const totals = screen.getByRole('heading', { name: 'My outreach totals', level: 2 })
+
+  expect(people.compareDocumentPosition(totals) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+})
+
+test('should open the journey page from the old prayer list address', async () => {
+  const router = start({ path: '/prayers' })
+
+  expect(await screen.findByRole('heading', { name: 'My journey', level: 1 })).toBeTruthy()
+  expect(router.state.location.pathname).toBe('/journey')
+  expect(screen.queryByRole('link', { name: 'Prayer list' })).toBeNull()
+})
+
+test('should change the response to the gospel from the editor', async () => {
+  server.editJourneyFn.mockImplementation(() => succeed())
   start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
 
-  fill(card.getByLabelText('Response to the gospel for Marcus <T>'), 'declined')
+  fireEvent.click(card.getByRole('button', { name: 'Edit record' }))
+  fill(card.getByLabelText('Response to the gospel'), 'declined')
+  fireEvent.click(card.getByRole('button', { name: 'Save changes' }))
 
-  await expectNotice('Salvation status updated.')
+  await expectNotice('Encounter updated.')
 
-  expect(server.setSalvationStatusFn).toHaveBeenCalledWith({
-    data: { id: 7, salvationStatus: 'declined' },
+  expect(server.editJourneyFn).toHaveBeenCalledWith({
+    data: { id: 7, journey: expect.objectContaining({ salvationStatus: 'declined' }) },
   })
 })
 
@@ -176,6 +243,8 @@ test('should add a prayer request and empty the input', async () => {
   start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
+  fireEvent.click(card.getByRole('button', { name: 'Add a prayer request' }))
+
   const input = card.getByPlaceholderText<HTMLInputElement>('Prayer request for Marcus <T>')
 
   fill(input, 'Healing for his family')
@@ -199,7 +268,7 @@ test('should mark a prayer request answered', async () => {
 
     return succeed()
   })
-  start({ path: '/prayers' })
+  start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
 
@@ -214,7 +283,7 @@ test('should mark a prayer request answered', async () => {
 
 test('should reopen an answered prayer request', async () => {
   server.setPrayerStatusFn.mockImplementation(() => succeed())
-  start({ path: '/prayers' })
+  start({ path: '/journey' })
 
   const card = await cardOf('J.R.')
 
@@ -233,7 +302,7 @@ test('should edit a prayer request and close its editor on save', async () => {
 
     return succeed()
   })
-  start({ path: '/prayers' })
+  start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
 
@@ -251,7 +320,7 @@ test('should edit a prayer request and close its editor on save', async () => {
 })
 
 test('should close the prayer editor on cancel without saving', async () => {
-  start({ path: '/prayers' })
+  start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
 
@@ -270,7 +339,7 @@ test('should remove a confirmed prayer request', async () => {
 
     return succeed()
   })
-  start({ path: '/prayers' })
+  start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
 
@@ -285,7 +354,7 @@ test('should remove a confirmed prayer request', async () => {
 
 test('should keep a prayer request when removing it is not confirmed', async () => {
   vi.spyOn(window, 'confirm').mockReturnValue(false)
-  start({ path: '/prayers' })
+  start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
 
@@ -323,7 +392,7 @@ test('should edit a record and close its editor on save', async () => {
         salvationStatus: 'saved',
         healing: true,
         holySpiritBaptism: true,
-        healingDetails: 'Knee pain left & he walked.',
+        notes: 'Knee pain left & he walked.',
       },
     },
   })
@@ -333,7 +402,7 @@ test('should edit a record and close its editor on save', async () => {
 })
 
 test('should show the server error in the notice', async () => {
-  server.setSalvationStatusFn.mockResolvedValue({
+  server.setPrayerStatusFn.mockResolvedValue({
     ok: false,
     status: 404,
     error: 'Record not found.',
@@ -342,13 +411,13 @@ test('should show the server error in the notice', async () => {
 
   const card = await cardOf('Marcus <T>')
 
-  fill(card.getByLabelText('Response to the gospel for Marcus <T>'), 'declined')
+  fireEvent.click(card.getByRole('button', { name: 'Mark answered' }))
 
   await expectNotice('Record not found.')
 })
 
 test('should show the server error in Korean when the language is Korean', async () => {
-  server.setSalvationStatusFn.mockResolvedValue({
+  server.setPrayerStatusFn.mockResolvedValue({
     ok: false,
     status: 404,
     error: 'Record not found.',
@@ -357,13 +426,13 @@ test('should show the server error in Korean when the language is Korean', async
 
   const card = await cardOf('Marcus <T>')
 
-  fill(card.getByLabelText('Marcus <T>님의 복음에 대한 반응'), 'declined')
+  fireEvent.click(card.getByRole('button', { name: '응답받음으로 표시' }))
 
   await expectNotice('기록을 찾을 수 없습니다.')
 })
 
 test('should say so when a successful action leaves the records unreloadable', async () => {
-  server.setSalvationStatusFn.mockImplementation(() => {
+  server.setPrayerStatusFn.mockImplementation(() => {
     server.getSnapshot.mockResolvedValue({
       ok: false,
       status: 503,
@@ -376,7 +445,7 @@ test('should say so when a successful action leaves the records unreloadable', a
 
   const card = await cardOf('Marcus <T>')
 
-  fill(card.getByLabelText('Response to the gospel for Marcus <T>'), 'declined')
+  fireEvent.click(card.getByRole('button', { name: 'Mark answered' }))
 
   await expectNotice('Saved, but the latest records could not be loaded. Please try again.')
 })
@@ -384,7 +453,7 @@ test('should say so when a successful action leaves the records unreloadable', a
 test('should ignore a second action while one is still running', async () => {
   let finish = () => {}
 
-  server.setSalvationStatusFn.mockImplementation(
+  server.setPrayerStatusFn.mockImplementation(
     () =>
       new Promise((resolve) => {
         finish = () => resolve({ ok: true, body: {} })
@@ -392,52 +461,49 @@ test('should ignore a second action while one is still running', async () => {
   )
   start({ path: '/journey' })
 
-  const first = await cardOf('Marcus <T>')
-  const second = await cardOf('Dee')
+  const card = await cardOf('Marcus <T>')
 
-  fill(first.getByLabelText('Response to the gospel for Marcus <T>'), 'declined')
-  await waitFor(() => expect(server.setSalvationStatusFn).toHaveBeenCalledTimes(1))
-  fill(second.getByLabelText('Response to the gospel for Dee'), 'saved')
+  fireEvent.click(card.getByRole('button', { name: 'Mark answered' }))
+  await waitFor(() => expect(server.setPrayerStatusFn).toHaveBeenCalledTimes(1))
+  fireEvent.click(card.getByRole('button', { name: 'Mark answered' }))
   finish()
 
-  await expectNotice('Salvation status updated.')
+  await expectNotice('Prayer request updated.')
 
-  expect(server.setSalvationStatusFn).toHaveBeenCalledTimes(1)
-  expect(server.setSalvationStatusFn).toHaveBeenCalledWith({
-    data: { id: 7, salvationStatus: 'declined' },
-  })
+  expect(server.setPrayerStatusFn).toHaveBeenCalledTimes(1)
+  expect(server.setPrayerStatusFn).toHaveBeenCalledWith({ data: { id: 12, status: 'answered' } })
 })
 
 test('should clear the notice when the member changes tab', async () => {
-  server.setSalvationStatusFn.mockImplementation(() => succeed())
+  server.setPrayerStatusFn.mockImplementation(() => succeed())
   start({ path: '/journey' })
 
   const card = await cardOf('Marcus <T>')
 
-  fill(card.getByLabelText('Response to the gospel for Marcus <T>'), 'declined')
-  await expectNotice('Salvation status updated.')
-  fireEvent.click(screen.getByRole('link', { name: 'Prayer list' }))
+  fireEvent.click(card.getByRole('button', { name: 'Mark answered' }))
+  await expectNotice('Prayer request updated.')
+  fireEvent.click(screen.getByRole('link', { name: 'Record' }))
 
-  await screen.findByRole('heading', { name: 'My prayer list', level: 1 })
+  await screen.findByRole('heading', { name: 'Share an encounter.', level: 1 })
 
   expect(document.querySelector('.notice')).toBeNull()
 })
 
-test('should drop the notice when the next poll of the records succeeds', async () => {
-  server.setSalvationStatusFn.mockImplementation(() => succeed())
+test('should drop the notice when a later read of the records succeeds', async () => {
+  server.setPrayerStatusFn.mockImplementation(() => succeed())
 
   const router = start({ path: '/journey' })
   const card = await cardOf('Marcus <T>')
 
-  fill(card.getByLabelText('Response to the gospel for Marcus <T>'), 'declined')
-  await expectNotice('Salvation status updated.')
+  fireEvent.click(card.getByRole('button', { name: 'Mark answered' }))
+  await expectNotice('Prayer request updated.')
   await new Promise((resolve) => setTimeout(resolve, 5))
   await router.options.context.queryClient.refetchQueries({ queryKey: ['snapshot'] })
 
   await waitFor(() => expect(document.querySelector('.notice')).toBeNull())
 })
 
-test('should show a failed poll as the notice and keep the loaded records', async () => {
+test('should show a failed read of the records as the notice and keep the loaded records', async () => {
   const router = start({ path: '/journey' })
 
   await cardOf('Marcus <T>')
@@ -458,10 +524,12 @@ test('should show a failed poll as the notice and keep the loaded records', asyn
 test('should toggle the language, the heading, the document, and the cookie', async () => {
   start({ path: '/', session: 'anon' })
 
-  await screen.findByRole('heading', { name: 'LIVE SOUL-WINNING IMPACT · SINCE OCTOBER 2026' })
+  await screen.findByRole('heading', {
+    name: 'Record each person you reach. Keep praying for them.',
+  })
   fireEvent.click(screen.getByRole('button', { name: '한국어로 보기' }))
 
-  expect(await screen.findByRole('heading', { name: 'NCTC 전도 현황' })).toBeTruthy()
+  expect(await screen.findByRole('heading', { name: '만난 한 사람 한 사람을 기록하고, 계속 기도하세요.' })).toBeTruthy()
   expect(document.cookie).toContain('soul-winning-language=ko')
   expect(document.documentElement.lang).toBe('ko')
   expect(document.title).toBe('NCTC 영혼구원 여정')
@@ -469,7 +537,7 @@ test('should toggle the language, the heading, the document, and the cookie', as
   fireEvent.click(screen.getByRole('button', { name: '영어로 보기' }))
 
   expect(
-    await screen.findByRole('heading', { name: 'LIVE SOUL-WINNING IMPACT · SINCE OCTOBER 2026' }),
+    await screen.findByRole('heading', { name: 'Record each person you reach. Keep praying for them.' }),
   ).toBeTruthy()
   expect(document.cookie).toContain('soul-winning-language=en')
   expect(document.documentElement.lang).toBe('en')
@@ -480,14 +548,16 @@ test('should carry a Korean choice stored in localStorage over to the cookie', a
   localStorage.setItem('soul-winning-language', 'ko')
   start({ path: '/', session: 'anon' })
 
-  expect(await screen.findByRole('heading', { name: 'NCTC 전도 현황' })).toBeTruthy()
+  expect(await screen.findByRole('heading', { name: '만난 한 사람 한 사람을 기록하고, 계속 기도하세요.' })).toBeTruthy()
   expect(document.cookie).toContain('soul-winning-language=ko')
 })
 
 test('should send a signed-out visitor from a member page to the public page', async () => {
   const router = start({ path: '/journey', session: 'anon' })
 
-  await screen.findByRole('heading', { name: 'LIVE SOUL-WINNING IMPACT · SINCE OCTOBER 2026' })
+  await screen.findByRole('heading', {
+    name: 'Record each person you reach. Keep praying for them.',
+  })
 
   expect(router.state.location.pathname).toBe('/')
   expect(server.getSnapshot).not.toHaveBeenCalled()
@@ -506,7 +576,55 @@ test('should open the team page for a leader', async () => {
 
   expect(await screen.findByRole('heading', { name: 'Team records', level: 1 })).toBeTruthy()
   expect(router.state.location.pathname).toBe('/team')
-  expect((await screen.findAllByText(/Recorded by Grace Lee/)).length).toBeGreaterThan(0)
+  expect(await screen.findByRole('button', { name: 'Tori' })).toBeTruthy()
+  expect(screen.getByText('5 records · 2 team members · 2 open prayer requests')).toBeTruthy()
+})
+
+test('should filter the team records by team member and clear the filter', async () => {
+  start({ path: '/team', session: 'leader' })
+
+  fireEvent.click(await screen.findByRole('button', { name: /^Sam Park/ }))
+
+  expect(screen.getByText('1 record · 1 team member · 1 open prayer request')).toBeTruthy()
+  expect(screen.queryByRole('button', { name: 'Dee' })).toBeNull()
+
+  fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+
+  expect(screen.getByRole('button', { name: 'Dee' })).toBeTruthy()
+})
+
+test('should say so when no team record matches the search', async () => {
+  start({ path: '/team', session: 'leader' })
+
+  fill(await screen.findByLabelText('Search records'), 'nobody')
+
+  expect(screen.getByRole('heading', { name: 'No records match.' })).toBeTruthy()
+})
+
+test('should open a team record in the panel and close it with Escape', async () => {
+  start({ path: '/team', session: 'leader' })
+
+  fireEvent.click(await screen.findByRole('button', { name: 'Tori' }))
+
+  const panel = within(screen.getByRole('complementary', { name: 'Tori' }))
+
+  expect(panel.getByText('sam@example.com')).toBeTruthy()
+  expect(panel.getByText('Courage')).toBeTruthy()
+  expect(panel.queryByRole('button', { name: 'Edit in My journey' })).toBeNull()
+  expect(panel.getByText('Only Sam Park can edit this record.')).toBeTruthy()
+
+  fireEvent.keyDown(window, { key: 'Escape' })
+
+  expect(screen.queryByRole('complementary', { name: 'Tori' })).toBeNull()
+})
+
+test('should offer My journey from the panel of a record of the viewer', async () => {
+  const router = start({ path: '/team', session: 'leader' })
+
+  fireEvent.click(await screen.findByRole('button', { name: 'Dee' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Edit in My journey' }))
+
+  await waitFor(() => expect(router.state.location.pathname).toBe('/journey'))
 })
 
 test('should start Google sign-in from the public page', async () => {

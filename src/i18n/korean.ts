@@ -1,10 +1,11 @@
-// Interface copy only. Names, locations, healing details, and prayer requests
+// Interface copy only. Names, locations, notes, and prayer requests
 // remain exactly as entered by the recorder, in either language.
 const korean: Record<string, string> = {
   'Soul Winning Journey': 'NCTC 영혼구원 여정',
+  'Record each person you reach. Keep praying for them.': '만난 한 사람 한 사람을 기록하고, 계속 기도하세요.',
+  'LIVE SOUL-WINNING IMPACT · SINCE OCTOBER 2026': '실시간 집계 · 2026년 10월부터',
   Overview: '한눈에 보기',
   'My journey': '나의 전도 기록',
-  'Prayer list': '중보기도 목록',
   Record: '만남 기록하기',
   'Team records': '사역 전체 기록',
   'Sign out': '로그아웃',
@@ -26,7 +27,7 @@ const korean: Record<string, string> = {
     '이 수치는 참여자가 직접 기록한 내용으로, 같은 사람을 여러 번 만난 경우도 포함될 수 있습니다. 새 기록은 자동으로 반영되며, 이름과 기도 제목 등 개인 정보는 공개되지 않습니다.',
   'Live totals are temporarily unavailable.': '현재 실시간 수치를 불러올 수 없습니다.',
   'Start your soul-winning journey': '나의 영혼구원 여정을 시작해 보세요',
-  'Anyone with a Google account can participate—no approval needed. Record an encounter, track follow-up, and keep a private prayer list.':
+  'Anyone with a Google account can join. No approval is needed. Record an encounter, track follow-up, and keep a private prayer list.':
     'Google 계정이 있으면 누구나 바로 참여할 수 있습니다. 복음을 전한 만남을 기록하고, 이후의 변화와 기도 제목을 이어서 관리해 보세요.',
   'Continue with Google': 'Google로 시작하기',
   'NEW CREATION TRAINING CENTER · WORLDWIDE OUTREACH': 'NCTC · 전 세계 전도',
@@ -36,21 +37,20 @@ const korean: Record<string, string> = {
   'Learn with NCTC on YouTube ↗': 'NCTC 한국어 유튜브에서 배우기 ↗',
   'Learn about NCTC ↗': 'NCTC 알아보기 ↗',
   'Your records stay private': '내 기록은 나와 NCTC 관리자에게만 보입니다',
-  'Only you and NCTC admins can see the names, locations, healing details, and prayer requests you record. Other participants see aggregate totals only. Use a first name or initials when possible, share only details the person is comfortable having recorded, and correct or remove an entry from your journey at any time.':
-    '다른 참여자에게는 전체 숫자만 공개됩니다. 가능하면 이름 일부나 이니셜을 사용하고, 당사자가 원치 않는 민감한 내용은 기록하지 마세요. 내 기록은 언제든 수정하거나 삭제할 수 있습니다.',
+  'Only you and NCTC admins can see the names, locations, notes, and prayer requests you record. Other participants see totals only. Use a first name or initials when possible, record only what the person is comfortable with, and correct or remove an entry at any time.':
+    '다른 참여자에게는 전체 숫자만 공개됩니다. 가능하면 이름이나 이니셜만 사용하고, 당사자가 원치 않는 민감한 내용은 기록하지 마세요. 내 기록은 언제든 수정하거나 삭제할 수 있습니다.',
   'Google sign-in required': 'Google 로그인이 필요합니다',
   'Please sign out and choose Continue with Google.':
     "로그아웃한 뒤 'Google로 시작하기'를 선택해 주세요.",
   'We couldn’t open your journey.': '여정을 불러오지 못했습니다.',
   'Try again': '다시 시도',
-  'Opening your journey…': '여정을 여는 중…',
+  'Opening your journey…': '나의 기록을 불러오는 중…',
   'Checking your records.': '기록을 확인하고 있습니다.',
   'YOUR JOURNEY': '나의 여정',
   'Every person matters.': '한 사람 한 사람이 소중합니다.',
   'NCTC is raising end-time soul winners worldwide. Keep your outreach encounters and prayer follow-up together.':
     '복음을 전한 만남과 중보기도를 한곳에서 이어 가세요.',
   'My encounters recorded': '내가 기록한 만남',
-  'Active prayer requests': '기도 중인 제목',
   'Answered prayers': '응답받은 기도',
   'Ministry totals': '사역 전체 합계',
   'My outreach totals': '나의 전도 기록 합계',
@@ -62,26 +62,57 @@ const korean: Record<string, string> = {
   'These totals use only your records and may include repeat encounters.':
     '이 수치는 내 기록만 집계하며, 같은 사람을 여러 번 만난 기록이 포함될 수 있습니다.',
   'People I recorded': '내가 만난 사람들',
-  'Community totals are self-reported and may include repeat encounters. Names and requests are private to each recorder and NCTC admins.':
-    '전체 수치는 참여자가 직접 기록했으며 반복 만남이 포함될 수 있습니다. 이름과 기도 제목은 기록자와 NCTC 관리자에게만 공개됩니다.',
-  'RECENTLY RECORDED': '최근 기록',
   'My people': '내가 만난 사람들',
-  'Your first recorded person will appear here and on your prayer list.':
-    '첫 만남을 기록하면 이곳과 중보기도 목록에 함께 표시됩니다.',
+  'See all': '전체 보기',
+  'No requests yet': '아직 기도 제목이 없습니다',
+  'Record your first person.': '첫 만남을 기록해 보세요.',
+  'Their name, where you met, how they responded to the gospel, and what you are praying for them. Everything you record here shows up on your prayer list.':
+    '이름, 만난 장소, 복음에 대한 반응, 그리고 그분을 위한 기도 제목을 적습니다. 여기에 기록한 내용은 모두 나의 기도 목록에 나타납니다.',
+  'Totals are self-reported and may include repeat encounters. Names and requests stay private to you and NCTC admins.':
+    '합계는 참여자가 직접 기록한 것이며, 같은 사람을 여러 번 만난 기록이 포함될 수 있습니다. 이름과 기도 제목은 본인과 NCTC 관리자만 볼 수 있습니다.',
   'Keep growing as a soul winner': '영혼구원자로 계속 성장하세요',
   'Learn and be encouraged through NCTC’s worldwide YouTube community.':
-    'NCTC의 전 세계 유튜브 공동체를 통해 배우고 격려받으세요.',
+    'NCTC 유튜브를 통해 함께 배우고 격려받으세요.',
   'Watch NCTC on YouTube ↗': 'NCTC 한국어 유튜브 보기 ↗',
   'PERSONAL RECORDS': '나의 전도 기록',
   'Only you and NCTC admins can see these names and requests. You can correct or remove your entries here.':
     '이름과 기도 제목은 본인과 NCTC 관리자만 볼 수 있습니다. 여기에서 기록을 수정하거나 삭제할 수 있습니다.',
-  'INTERCESSORY PRAYER': '중보기도',
-  'My prayer list': '나의 중보기도 목록',
-  'Everyone you record appears here automatically. Focus on active requests, add updates, and remember answered prayers.':
-    '만남을 기록하면 이곳에 자동으로 추가됩니다. 기도 제목을 적고, 응답받은 기도도 함께 기억해 보세요.',
   'ADMIN VIEW': '관리자 화면',
-  'Review encounters and prayer follow-up across the ministry team.':
-    '사역 전체의 전도 기록과 후속 기도를 살펴보세요.',
+  'Every encounter and prayer request recorded by the team, including your own.':
+    '팀이 기록한 모든 만남과 기도 제목입니다. 본인의 기록도 포함됩니다.',
+  'You can see every team member’s records. Only the person who recorded one can edit it.':
+    '모든 팀원의 기록을 볼 수 있습니다. 기록은 작성한 사람만 수정할 수 있습니다.',
+  Encounter: '만남',
+  Everyone: '전체',
+  Me: '나',
+  '(you)': '(나)',
+  'Open prayer requests': '기도 중인 제목',
+  'Any response': '모든 반응',
+  'Date range': '기간',
+  'All dates': '전체 기간',
+  'This week': '이번 주',
+  'This month': '이번 달',
+  'Search by name or place': '이름 또는 장소로 검색',
+  'Search records': '기록 검색',
+  'Group by team member': '팀원별로 묶기',
+  'Clear filters': '필터 지우기',
+  'Download CSV': 'CSV 내려받기',
+  Person: '만난 분',
+  Where: '장소',
+  Date: '날짜',
+  Response: '반응',
+  Encounters: '경험',
+  Prayer: '기도',
+  Email: '이메일',
+  'Answered requests': '응답받은 기도 제목',
+  'All answered': '모두 응답받음',
+  'No records match.': '조건에 맞는 기록이 없습니다.',
+  'Clear a filter or widen the date range to see more of the team’s records.':
+    '필터를 지우거나 기간을 넓히면 더 많은 기록을 볼 수 있습니다.',
+  Previous: '이전',
+  Next: '다음',
+  'No open requests.': '기도 중인 제목이 없습니다.',
+  'Edit in My journey': '나의 전도 기록에서 수정',
   'RECORD AN ENCOUNTER': '만남 기록하기',
   'Share an encounter.': '만남을 기록하세요.',
   'Make one entry for each outreach encounter you personally took part in. The person will be added to your private prayer list.':
@@ -94,6 +125,9 @@ const korean: Record<string, string> = {
   'Date of encounter not set': '만난 날짜 미입력',
   'Recorded on': '기록한 날짜:',
   '02 · What happened?': '02 · 어떤 일이 있었나요?',
+  '03 · Prayer': '03 · 기도',
+  'Prayer request (optional)': '기도 제목(선택)',
+  'What can you pray for this person?': '이 분을 위해 무엇을 기도할까요?',
   'Salvation status': '복음에 대한 반응',
   'Response to the gospel': '복음에 대한 반응',
   'Not interested at this time': '지금은 복음에 관심을 보이지 않음',
@@ -113,7 +147,8 @@ const korean: Record<string, string> = {
   'Salvation received': '예수님을 영접함',
   'Healing reported': '치유를 경험함',
   'Holy Spirit baptism reported': '성령세례를 받음',
-  'Healing details (optional)': '치유 내용(선택)',
+  'Notes (optional)': '메모(선택)',
+  Notes: '메모',
   'Only you and NCTC admins can see this entry. Use a first name or initials when possible, and avoid sensitive details without the person’s permission.':
     '이 기록은 본인과 NCTC 관리자만 볼 수 있습니다. 가능하면 이름이나 이니셜만 사용하고, 허락 없이 민감한 내용은 기록하지 마세요.',
   'Save encounter': '만남 저장하기',
@@ -130,22 +165,25 @@ const korean: Record<string, string> = {
   'Save changes': '변경 사항 저장',
   Healing: '치유',
   'Holy Spirit baptism': '성령세례',
-  'Healing details:': '치유 내용:',
   'Intercessory prayer': '중보기도',
   'Add a prayer request': '기도 제목 추가',
   'Add request': '추가',
+  Done: '완료',
+  Open: '열기',
+  Close: '닫기',
+  'Prayer request': '기도 제목',
+  'Latest request': '최근 기도 제목',
   'No people recorded yet': '아직 기록한 만남이 없습니다.',
   'Record someone you reached to begin your journey and prayer list.':
     '첫 만남을 기록하면 전도 기록과 중보기도 목록이 시작됩니다.',
   'First name or initials': '이름 또는 이니셜',
   'City, neighborhood, or event': '도시, 지역 또는 행사',
   'Describe only what the person is comfortable having recorded.':
-    '어떤 변화가 있었는지, 본인이 기록을 허락한 내용만 적어 주세요.',
-  'Prayer request': '기도 제목',
+    '당사자가 기록해도 괜찮다고 한 내용만 적어 주세요.',
   'The request could not be completed.': '요청을 완료하지 못했습니다.',
   'Saved, but the latest records could not be loaded. Please try again.':
     '저장되었지만 최신 기록을 불러오지 못했습니다. 다시 시도해 주세요.',
-  'Person saved to your journey and prayer list.': '만난 사람이 여정과 기도 목록에 저장되었습니다.',
+  'Person saved to your journey and prayer list.': '만남을 나의 전도 기록과 기도 목록에 저장했습니다.',
   'Encounter updated.': '만남 기록을 수정했습니다.',
   'Prayer request updated.': '기도 제목을 수정했습니다.',
   'Prayer request added.': '기도 제목을 추가했습니다.',
@@ -164,7 +202,7 @@ const korean: Record<string, string> = {
   'A verified email address is required.': '확인된 이메일 주소가 필요합니다.',
   'Please check the entry.': '입력한 내용을 확인해 주세요.',
   'Please complete the name, location, and outcome choices.':
-    '이름, 장소, 결과를 모두 입력해 주세요.',
+    '이름, 장소, 복음에 대한 반응을 모두 입력해 주세요.',
   'Invalid record.': '올바르지 않은 기록입니다.',
   'Record not found.': '기록을 찾을 수 없습니다.',
   'Please check the record details and try again.': '기록 내용을 확인하고 다시 시도해 주세요.',

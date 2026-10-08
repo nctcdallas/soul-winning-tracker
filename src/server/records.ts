@@ -22,15 +22,16 @@ interface JourneyFields {
   salvationStatus: SalvationStatus
   healing: boolean
   holySpiritBaptism: boolean
-  healingDetails: string | null
+  notes: string | null
 }
 
 const TIMESTAMP = `'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'`
 
+// The `healing_details` column holds the notes of the encounter. It keeps its first name, so the live table needs no migration.
 const JOURNEY_COLUMNS = `id::int AS id, owner_user_id AS "ownerUserId", owner_email AS "recorderEmail",
   recorder_name AS "recorderName", soul_name AS "soulName", location,
   to_char(encounter_date, 'YYYY-MM-DD') AS "encounterDate", salvation, salvation_status AS "salvationStatus",
-  healing, healing_details AS "healingDetails", holy_spirit_baptism AS "holySpiritBaptism",
+  healing, healing_details AS "notes", holy_spirit_baptism AS "holySpiritBaptism",
   to_char(created_at AT TIME ZONE 'UTC', ${TIMESTAMP}) AS "createdAt"`
 
 const PRAYER_COLUMNS = `p.id::int AS id, p.journey_id::int AS "journeyId", p.request_text AS "requestText", p.status,
@@ -77,7 +78,7 @@ function parseJourney(raw: unknown, encounterDate: 'required' | 'optional'): Jou
   const input = raw as Record<string, unknown>
   const soulName = trimmed(input.soulName)
   const location = trimmed(input.location)
-  const details = trimmed(input.healingDetails)
+  const notes = trimmed(input.notes)
   const date = encounterDate === 'optional' && !input.encounterDate ? null : input.encounterDate
 
   if (
@@ -85,7 +86,7 @@ function parseJourney(raw: unknown, encounterDate: 'required' | 'optional'): Jou
     soulName.length > 100 ||
     !location ||
     location.length > 160 ||
-    details.length > 1000
+    notes.length > 1000
   ) {
     return null
   }
@@ -109,7 +110,7 @@ function parseJourney(raw: unknown, encounterDate: 'required' | 'optional'): Jou
     salvationStatus: input.salvationStatus,
     healing: input.healing,
     holySpiritBaptism: input.holySpiritBaptism,
-    healingDetails: input.healing ? details || null : null,
+    notes: notes || null,
   }
 }
 
@@ -119,22 +120,23 @@ function parsePrayerText(value: unknown) {
   return text && text.length <= 1000 ? text : null
 }
 
+// Only the recorder can change a record. An admin reads each record in the snapshot but has no right to change the record of a different member.
 // A record with no owner id came from the earlier site, and its recorder may reach it by email until a sign-in claims it.
-async function canAccessJourney(sql: Sql, journeyId: number, member: Member) {
+async function canChangeJourney(sql: Sql, journeyId: number, member: Member) {
   const rows = await sql`
     SELECT id FROM journeys WHERE id = ${journeyId}
-      AND (${member.isAdmin} OR owner_user_id = ${member.id}
+      AND (owner_user_id = ${member.id}
         OR (owner_user_id IS NULL AND lower(owner_email) = ${member.ownerEmail}))
     LIMIT 1`
 
   return rows.length > 0
 }
 
-async function canAccessPrayer(sql: Sql, prayerId: number, member: Member) {
+async function canChangePrayer(sql: Sql, prayerId: number, member: Member) {
   const rows = await sql`
     SELECT p.id FROM prayer_requests p JOIN journeys j ON j.id = p.journey_id
     WHERE p.id = ${prayerId}
-      AND (${member.isAdmin} OR j.owner_user_id = ${member.id}
+      AND (j.owner_user_id = ${member.id}
         OR (j.owner_user_id IS NULL AND lower(j.owner_email) = ${member.ownerEmail}))
     LIMIT 1`
 
@@ -182,6 +184,7 @@ async function createJourney(
   sql: Sql,
   member: Member,
   raw: unknown,
+  rawPrayerText?: unknown,
 ): Promise<Result<{ journey: { id: number } }>> {
   if (!raw || typeof raw !== 'object') {
     return fail(400, 'Please check the entry.')
@@ -193,13 +196,26 @@ async function createJourney(
     return fail(400, 'Please complete the name, location, and outcome choices.')
   }
 
+  const prayerText = trimmed(rawPrayerText)
+
+  if (prayerText.length > 1000) {
+    return fail(400, 'Please enter a prayer request under 1,000 characters.')
+  }
+
+  // One statement, so a failed prayer insert cannot leave a saved person with no request.
   const rows = await sql<{ id: number }>`
-    INSERT INTO journeys (owner_user_id, owner_email, recorder_name, soul_name, location, encounter_date,
-      salvation, salvation_status, healing, healing_details, holy_spirit_baptism)
-    VALUES (${member.id}, ${member.ownerEmail}, ${member.displayName}, ${fields.soulName}, ${fields.location},
-      CAST(${fields.encounterDate} AS DATE), ${fields.salvationStatus === 'saved'}, ${fields.salvationStatus},
-      ${fields.healing}, ${fields.healingDetails}, ${fields.holySpiritBaptism})
-    RETURNING id::int AS id`
+    WITH saved AS (
+      INSERT INTO journeys (owner_user_id, owner_email, recorder_name, soul_name, location, encounter_date,
+        salvation, salvation_status, healing, healing_details, holy_spirit_baptism)
+      VALUES (${member.id}, ${member.ownerEmail}, ${member.displayName}, ${fields.soulName}, ${fields.location},
+        CAST(${fields.encounterDate} AS DATE), ${fields.salvationStatus === 'saved'}, ${fields.salvationStatus},
+        ${fields.healing}, ${fields.notes}, ${fields.holySpiritBaptism})
+      RETURNING id
+    ), prayer AS (
+      INSERT INTO prayer_requests (journey_id, request_text)
+      SELECT id, CAST(${prayerText} AS TEXT) FROM saved WHERE ${prayerText !== ''}
+    )
+    SELECT id::int AS id FROM saved`
 
   return done({ journey: { id: rows[0].id } })
 }
@@ -216,7 +232,7 @@ async function editJourney(
     return fail(400, 'Invalid record.')
   }
 
-  if (!(await canAccessJourney(sql, id, member))) {
+  if (!(await canChangeJourney(sql, id, member))) {
     return fail(404, RECORD_NOT_FOUND)
   }
 
@@ -229,7 +245,7 @@ async function editJourney(
   await sql`UPDATE journeys SET soul_name = ${fields.soulName}, location = ${fields.location},
     encounter_date = CAST(${fields.encounterDate} AS DATE), salvation_status = ${fields.salvationStatus},
     salvation = ${fields.salvationStatus === 'saved'}, healing = ${fields.healing},
-    healing_details = ${fields.healingDetails}, holy_spirit_baptism = ${fields.holySpiritBaptism}
+    healing_details = ${fields.notes}, holy_spirit_baptism = ${fields.holySpiritBaptism}
     WHERE id = ${id}`
 
   return done({ saved: true })
@@ -247,7 +263,7 @@ async function setSalvationStatus(
     return fail(400, 'Invalid record.')
   }
 
-  if (!(await canAccessJourney(sql, id, member))) {
+  if (!(await canChangeJourney(sql, id, member))) {
     return fail(404, RECORD_NOT_FOUND)
   }
 
@@ -267,7 +283,7 @@ async function deleteJourney(
 ): Promise<Result<{ deleted: true }>> {
   const id = parseId(rawId)
 
-  if (!id || !(await canAccessJourney(sql, id, member))) {
+  if (!id || !(await canChangeJourney(sql, id, member))) {
     return fail(404, RECORD_NOT_FOUND)
   }
 
@@ -289,7 +305,7 @@ async function addPrayer(
     return fail(400, 'Please enter a prayer request under 1,000 characters.')
   }
 
-  if (!(await canAccessJourney(sql, journeyId, member))) {
+  if (!(await canChangeJourney(sql, journeyId, member))) {
     return fail(404, RECORD_NOT_FOUND)
   }
 
@@ -313,7 +329,7 @@ async function editPrayer(
     return fail(400, INVALID_PRAYER)
   }
 
-  if (!(await canAccessPrayer(sql, id, member))) {
+  if (!(await canChangePrayer(sql, id, member))) {
     return fail(404, PRAYER_NOT_FOUND)
   }
 
@@ -334,7 +350,7 @@ async function setPrayerStatus(
     return fail(400, INVALID_PRAYER)
   }
 
-  if (!(await canAccessPrayer(sql, id, member))) {
+  if (!(await canChangePrayer(sql, id, member))) {
     return fail(404, PRAYER_NOT_FOUND)
   }
 
@@ -354,7 +370,7 @@ async function deletePrayer(
     return fail(400, INVALID_PRAYER)
   }
 
-  if (!(await canAccessPrayer(sql, id, member))) {
+  if (!(await canChangePrayer(sql, id, member))) {
     return fail(404, PRAYER_NOT_FOUND)
   }
 

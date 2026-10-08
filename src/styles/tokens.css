@@ -33,6 +33,13 @@
   --crimson-500:#9E2A2B;
   --crimson-600:#7E1F21;
 
+  /* Ember — the fire of the ministry total. Used on that one tile and nowhere else. */
+  --ember-100:#FFF1D6;
+  --ember-200:#FFD79A;
+  --ember-300:#FFB347;
+  --ember-400:#F0782A;
+  --ember-500:#D9481C;
+
   /* Alerts share the accent; the copy says it is an alert. */
   --alert-500:var(--crimson-600);
 
@@ -55,6 +62,7 @@
   --text-accent:var(--crimson-500);
   --text-accent-invert:var(--crimson-300);
   --text-on-accent:var(--bone-100);
+  --text-fire-secondary:#D9C7B4;
 
   --border-hairline:var(--bone-300);
   --border-hairline-invert:rgba(247,244,238,.13);

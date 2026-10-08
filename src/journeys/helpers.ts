@@ -57,12 +57,16 @@ function journeyInputFrom(form: HTMLFormElement): JourneyInput {
     salvationStatus: salvationStatusOf(String(data.get('salvationStatus') || '')),
     healing: data.has('healing'),
     holySpiritBaptism: data.has('holySpiritBaptism'),
-    healingDetails: String(data.get('healingDetails') || ''),
+    notes: String(data.get('notes') || ''),
   }
 }
 
+function statusLabel(status: SalvationStatus, language: Language) {
+  return translate(STATUS_LABELS[status], language)
+}
+
 function statusLabelOf(person: Journey, language: Language) {
-  return translate(STATUS_LABELS[statusOf(person)], language)
+  return statusLabel(statusOf(person), language)
 }
 
 function dateOf(value: string, language: Language) {
@@ -104,6 +108,14 @@ function personalTotals(people: Journey[]): Totals {
   }
 }
 
+/** The request that was added last. */
+function latestOf(prayers: Prayer[]) {
+  return prayers.reduce<Prayer | undefined>(
+    (newest, prayer) => (!newest || prayer.createdAt > newest.createdAt ? prayer : newest),
+    undefined,
+  )
+}
+
 function prayersOf(person: Journey, prayers: Prayer[]) {
   const own = prayers.filter((prayer) => prayer.journeyId === person.id)
 
@@ -119,9 +131,11 @@ export {
   encounterDateOf,
   encounterISO,
   journeyInputFrom,
+  latestOf,
   personalTotals,
   prayersOf,
   salvationStatusOf,
+  statusLabel,
   statusLabelOf,
   statusOf,
   statusOptionsFor,

@@ -79,8 +79,10 @@ const getPublicTotals = createServerFn({ method: 'GET' }).handler(
 const getSnapshot = createServerFn({ method: 'GET' }).handler(() => asMember(snapshot))
 
 const createJourneyFn = createServerFn({ method: 'POST' })
-  .validator((input: JourneyInput) => input)
-  .handler(({ data }) => asMember((sql, member) => createJourney(sql, member, data)))
+  .validator((input: { journey: JourneyInput; requestText: string }) => input)
+  .handler(({ data }) =>
+    asMember((sql, member) => createJourney(sql, member, data.journey, data.requestText)),
+  )
 
 const editJourneyFn = createServerFn({ method: 'POST' })
   .validator((input: { id: number; journey: JourneyInput }) => input)

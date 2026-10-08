@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
 import { createJourneyFn } from '#/server/functions'
 import { useLanguage } from '#/i18n/language'
 import { journeyInputFrom, todayISO } from '#/journeys/helpers'
@@ -17,14 +16,14 @@ function RecordTab({ viewer }: { viewer: Viewer }) {
   const { t } = useLanguage()
   const run = useRunMutation()
   const navigate = useNavigate()
-  const [healing, setHealing] = useState(false)
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     const journey = journeyInputFrom(event.currentTarget)
+    const requestText = String(new FormData(event.currentTarget).get('requestText') || '')
     const completed = await run(
-      () => createJourneyFn({ data: journey }),
+      () => createJourneyFn({ data: { journey, requestText } }),
       'Person saved to your journey and prayer list.',
     )
 
@@ -79,19 +78,24 @@ function RecordTab({ viewer }: { viewer: Viewer }) {
           </Select>
         </Field>
         <div className="check-grid">
-          <CheckboxCard
-            name="healing"
-            label={t('Healing reported')}
-            onChange={(event) => setHealing(event.target.checked)}
-          />
+          <CheckboxCard name="healing" label={t('Healing reported')} />
           <CheckboxCard name="holySpiritBaptism" label={t('Holy Spirit baptism reported')} />
         </div>
-        <Field label={t('Healing details (optional)')} className={healing ? undefined : 'hidden'}>
+        <Field label={t('Notes (optional)')}>
           <Textarea
-            name="healingDetails"
+            name="notes"
             maxLength={1000}
             rows={4}
             placeholder={t('Describe only what the person is comfortable having recorded.')}
+          />
+        </Field>
+        <h2 className="step-title">{t('03 · Prayer')}</h2>
+        <Field label={t('Prayer request (optional)')}>
+          <Textarea
+            name="requestText"
+            maxLength={1000}
+            rows={3}
+            placeholder={t('What can you pray for this person?')}
           />
         </Field>
         <div className="record-form-foot">

@@ -10,11 +10,11 @@ web
 
 Members of New Creation Training Center (NCTC) and people who follow its teaching online, in English and Korean. A member records an outreach encounter, most often on a phone, and returns to pray for the people recorded. Design the phone layout first.
 
-Two other audiences use the same site. A signed-out visitor sees the live totals and the invitation to join. An NCTC admin reviews the records of all members.
+Two other audiences use the same site. A signed-out visitor sees the live totals and the invitation to join. An NCTC admin reviews the records of all members. An admin can read each record, but only the member who recorded one can change or remove it.
 
 ## Product Purpose
 
-Soul Winning Journey (nctcsoulwinning.org) lets a member record each person reached with the gospel, the response, any healing or Holy Spirit baptism, and prayer requests for that person. It adds the records of all members into four public totals. Success is that a member records an encounter in under a minute and keeps praying for the person after.
+Soul Winning Journey (nctcsoulwinning.org) lets a member record each person reached with the gospel, the response, any healing or Holy Spirit baptism, optional notes, and prayer requests for that person. It adds the records of all members into four public totals. Success is that a member records an encounter in under a minute and keeps praying for the person after.
 
 ## Positioning
 
@@ -23,17 +23,17 @@ A private prayer list and a public count in one tool. Names and requests stay wi
 ## Operating Context
 
 - Sign-in is Google only, through Netlify Identity. Anyone with a Google account can join without approval.
-- The totals refresh every five seconds while a page is open.
+- The public totals refresh every five seconds while the public page is open. The records of a member have no timer. They are read again after each change, on each change of tab, and when the window gets the focus.
 - The interface has English and Korean. Text that a member enters is stored as written and is not translated.
 - The live database holds real member records.
 
 ## Capabilities and Constraints
 
-- Screens: public page, Overview, My journey, Prayer list, Record, and Team records (admins only).
+- Screens: public page, Overview, My journey, Record, and Team records (admins only).
 - Response to the gospel has three values for new records (`declined`, `interested`, `saved`) and one earlier value (`praying`). Only `saved` adds to the salvation total.
 - Totals are self-reported and can include repeat encounters. The interface says so next to them.
 - The site must not load fonts or images from another origin.
-- Undecided: the wording. A copy pass in the brand voice is planned as separate work, so the October 2026 redesign kept each English and Korean string.
+- Undecided: the wording of the member screens. The public page had its copy pass in October 2026. The member screens have not, so they keep each English and Korean string.
 
 ## Brand Commitments
 

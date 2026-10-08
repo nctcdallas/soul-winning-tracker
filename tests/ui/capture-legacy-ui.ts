@@ -107,7 +107,6 @@ async function capture(state: State, index: number): Promise<Summary> {
   const clicks = [
     state.tab ? `button[data-tab="${state.tab}"]` : null,
     state.open === 'journey-editor' ? 'button[data-edit-journey]' : null,
-    state.open === 'prayer-editor' ? 'button[data-edit-prayer]' : null,
   ]
 
   for (const selector of clicks) {
