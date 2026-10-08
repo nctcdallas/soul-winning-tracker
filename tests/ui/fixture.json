@@ -1,0 +1,92 @@
+{
+  "totals": { "reached": 128, "salvations": 41, "healings": 9, "baptisms": 6 },
+  "viewer": { "displayName": "Grace Lee", "email": "grace@example.com" },
+  "mine": [
+    {
+      "id": 7,
+      "ownerUserId": "user-grace",
+      "recorderEmail": "grace@example.com",
+      "recorderName": "Grace Lee",
+      "soulName": "Marcus <T>",
+      "location": "Plano, TX",
+      "encounterDate": "2026-10-02",
+      "salvation": true,
+      "salvationStatus": "saved",
+      "healing": true,
+      "healingDetails": "Knee pain left & he walked.",
+      "holySpiritBaptism": true,
+      "createdAt": "2026-10-03T15:04:05.000Z"
+    },
+    {
+      "id": 5,
+      "ownerUserId": "user-grace",
+      "recorderEmail": "grace@example.com",
+      "recorderName": "Grace Lee",
+      "soulName": "한나",
+      "location": "Seoul",
+      "encounterDate": null,
+      "salvation": false,
+      "salvationStatus": "declined",
+      "healing": false,
+      "healingDetails": null,
+      "holySpiritBaptism": false,
+      "createdAt": "2026-10-02T09:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "ownerUserId": "user-grace",
+      "recorderEmail": "grace@example.com",
+      "recorderName": "Grace Lee",
+      "soulName": "J.R.",
+      "location": "Dallas",
+      "encounterDate": "2026-09-28",
+      "salvation": false,
+      "salvationStatus": "praying",
+      "healing": true,
+      "healingDetails": null,
+      "holySpiritBaptism": false,
+      "createdAt": "2026-10-01T18:30:00.000Z"
+    },
+    {
+      "id": 1,
+      "ownerUserId": "user-grace",
+      "recorderEmail": "grace@example.com",
+      "recorderName": "Grace Lee",
+      "soulName": "Dee",
+      "location": "Frisco",
+      "encounterDate": "2026-09-27",
+      "salvation": false,
+      "salvationStatus": "interested",
+      "healing": false,
+      "healingDetails": null,
+      "holySpiritBaptism": false,
+      "createdAt": "2026-10-01T18:00:00.000Z"
+    }
+  ],
+  "others": [
+    {
+      "id": 6,
+      "ownerUserId": "user-sam",
+      "recorderEmail": "sam@example.com",
+      "recorderName": "Sam Park",
+      "soulName": "Tori",
+      "location": "Austin",
+      "encounterDate": "2026-10-01",
+      "salvation": false,
+      "salvationStatus": "interested",
+      "healing": false,
+      "healingDetails": null,
+      "holySpiritBaptism": false,
+      "createdAt": "2026-10-02T12:00:00.000Z"
+    }
+  ],
+  "prayers": [
+    { "id": 12, "journeyId": 7, "requestText": "Strength for his new walk <3", "status": "active", "createdAt": "2026-10-03T16:00:00.000Z" },
+    { "id": 11, "journeyId": 7, "requestText": "A church home", "status": "answered", "createdAt": "2026-10-03T15:30:00.000Z" },
+    { "id": 10, "journeyId": 7, "requestText": "His family", "status": "answered", "createdAt": "2026-10-03T15:20:00.000Z" },
+    { "id": 9, "journeyId": 2, "requestText": "Open heart", "status": "answered", "createdAt": "2026-10-01T19:00:00.000Z" }
+  ],
+  "otherPrayers": [
+    { "id": 8, "journeyId": 6, "requestText": "Courage", "status": "active", "createdAt": "2026-10-02T12:30:00.000Z" }
+  ]
+}

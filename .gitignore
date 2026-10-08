@@ -10,3 +10,12 @@ prod.sql
 node_modules
 dist
 .DS_Store
+
+# TanStack Start
+dist-ssr
+*.local
+.nitro
+.tanstack
+.output
+.vinxi
+__unconfig*
