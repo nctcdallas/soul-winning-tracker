@@ -74,6 +74,16 @@ function acrossPeopleLabel(count: number, language: Language) {
   return language === 'ko' ? `${count}명` : `Across ${plural(count, 'person', 'people')}`
 }
 
+function ownShareLabel(count: number, language: Language) {
+  if (language === 'ko') {
+    return `이 중 ${count}건은 내가 기록했습니다.`
+  }
+
+  return count === 1
+    ? '1 of them is a person you recorded.'
+    : `${count} of them are people you recorded.`
+}
+
 function lastOfLabel(shown: number, total: number, language: Language) {
   return language === 'ko' ? `전체 ${total}명 중 최근 ${shown}명` : `Last ${shown} of ${total}`
 }
@@ -124,6 +134,7 @@ export {
   onlyRecorderEditsLabel,
   openCountLabel,
   openPrayerCountLabel,
+  ownShareLabel,
   openRequestCountLabel,
   peopleCountLabel,
   positionLabel,

@@ -5,6 +5,7 @@ import {
   activeCountLabel,
   lastOfLabel,
   localeOf,
+  ownShareLabel,
   peopleCountLabel,
   sinceLabel,
   youtubeUrl,
@@ -112,6 +113,18 @@ function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
           </Button>
         </Panel>
       )}
+      <section className="section">
+        <h2 className="section-title">{t('Ministry totals')}</h2>
+        <TotalsGrid
+          totals={totals}
+          note={mine.length > 0 ? ownShareLabel(mine.length, language) : undefined}
+        />
+        <p className="fine-print">
+          {t(
+            'Totals are self-reported and may include repeat encounters. Names and requests stay private to you and NCTC admins.',
+          )}
+        </p>
+      </section>
       {mine.length > 0 && (
         <>
           <div className="stat-row section">
@@ -149,15 +162,6 @@ function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
           </section>
         </>
       )}
-      <section className="section">
-        <h2 className="section-title">{t('Ministry totals')}</h2>
-        <TotalsGrid totals={totals} />
-        <p className="fine-print">
-          {t(
-            'Totals are self-reported and may include repeat encounters. Names and requests stay private to you and NCTC admins.',
-          )}
-        </p>
-      </section>
       {mine.length === 0 && (
         <Panel as="section" tone="boneAlt" className="text-panel section">
           <h2 className="section-title">{t('Keep growing as a soul winner')}</h2>
