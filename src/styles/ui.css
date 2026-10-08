@@ -424,6 +424,32 @@
   font-size: clamp(64px, 19vw, 104px);
 }
 
+.ui-stat-fire {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 248px;
+  padding-bottom: 64px;
+  /* The view until the canvas draws, and the view of a browser with no WebGL. */
+  background:
+    radial-gradient(120% 70px at 50% 100%, var(--ember-400) 0%, var(--crimson-500) 45%, transparent 100%),
+    linear-gradient(to top, rgb(126 31 33 / 0.55), transparent 62%),
+    var(--ink-900);
+}
+
+.ui-stat-fire .ui-stat-label,
+.ui-stat-fire .ui-stat-note {
+  color: var(--text-fire-secondary);
+}
+
+.ui-coals {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+}
+
 .ui-avatar {
   display: inline-grid;
   flex: 0 0 40px;
@@ -945,6 +971,10 @@ html[lang='ko'] :is(.ui-label, .ui-field-label, .ui-eyebrow, .ui-badge, .ui-stat
   .ui-stat-hero {
     padding: 32px 32px 28px;
   }
+
+  .ui-stat-fire {
+    padding-bottom: 80px;
+  }
 }
 
 @media (min-width: 750px) {
@@ -972,6 +1002,10 @@ html[lang='ko'] :is(.ui-label, .ui-field-label, .ui-eyebrow, .ui-badge, .ui-stat
 @media (min-width: 900px) {
   .ui-stat-hero {
     min-height: 260px;
+  }
+
+  .ui-stat-fire {
+    min-height: 316px;
   }
 }
 

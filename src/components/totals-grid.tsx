@@ -43,7 +43,7 @@ function TotalsGrid({ totals, personal = false }: TotalsGridProps) {
       aria-label={t(personal ? 'My outreach totals' : 'Live ministry totals')}
     >
       <Stat
-        variant="hero"
+        variant={personal ? 'hero' : 'fire'}
         label={t(personal ? HERO_STAT.personalLabel : HERO_STAT.publicLabel)}
         value={countOf(totals, HERO_STAT.key)}
         note={t(personal ? HERO_STAT.personalNote : HERO_STAT.publicNote)}
