@@ -2,6 +2,7 @@ import { deleteJourneyFn, editJourneyFn, setSalvationStatusFn } from '#/server/f
 import { useLanguage } from '#/i18n/language'
 import {
   activeCountLabel,
+  answeredCountLabel,
   prayerPlaceholderLabel,
   prayerPromptLabel,
   statusAriaLabel,
@@ -17,6 +18,13 @@ import {
   todayISO,
 } from '#/journeys/helpers'
 import { useRunMutation } from '#/queries/use-run-mutation'
+import { Avatar } from '#/ui/avatar'
+import { Badge } from '#/ui/badge'
+import { Button } from '#/ui/button'
+import { CheckboxCard } from '#/ui/checkbox-card'
+import { Field, Input, Select, Textarea } from '#/ui/field'
+import { Panel } from '#/ui/panel'
+import { TextAction } from '#/ui/text-action'
 import { AddPrayerForm } from './add-prayer-form'
 import { PrayerRow } from './prayer-row'
 import { StatusOptions } from './status-options'
@@ -88,117 +96,107 @@ function PersonCard({
   }
 
   return (
-    <article className="person-card">
-      <div className="person-head">
-        <div className="person-initial">{person.soulName.charAt(0).toUpperCase()}</div>
+    <Panel as="article" className="record">
+      <div className="record-head">
+        <Avatar name={person.soulName} />
         <div>
-          <h3>{person.soulName}</h3>
-          <p>
+          <h3 className="record-name">{person.soulName}</h3>
+          <p className="meta">
             {person.location} · {encounterDateOf(person, language)}
             {showRecorder &&
               ` · ${t('Recorded by')} ${person.recorderName} (${person.recorderEmail || ''})`}
           </p>
-          <p className="recorded-date">
+          <p className="meta">
             {t('Recorded on')} {dateOf(person.createdAt, language)}
           </p>
         </div>
       </div>
-      <div className="record-actions record-toolbar">
-        <button type="button" onClick={() => onEditJourney(editing ? null : person.id)}>
+      <div className="action-row">
+        <TextAction onClick={() => onEditJourney(editing ? null : person.id)}>
           {editing ? t('Close editor') : t('Edit record')}
-        </button>
-        <button type="button" className="danger-link" onClick={remove}>
+        </TextAction>
+        <TextAction tone="danger" onClick={remove}>
           {t('Remove record')}
-        </button>
+        </TextAction>
       </div>
       {editing && (
-        <form className="journey-edit" onSubmit={save}>
-          <div className="field-grid">
-            <label className="encounter-name">
-              {t('Person reached')}
-              <input name="soulName" required maxLength={100} defaultValue={person.soulName} />
-            </label>
-            <label>
-              {t('Location')}
-              <input name="location" required maxLength={160} defaultValue={person.location} />
-            </label>
-            <label>
-              {t('Date of encounter')}
-              <input
+        <form className="record-editor" onSubmit={save}>
+          <div className="form-grid">
+            <Field label={t('Person reached')} className="form-grid-wide">
+              <Input name="soulName" required maxLength={100} defaultValue={person.soulName} />
+            </Field>
+            <Field label={t('Location')}>
+              <Input name="location" required maxLength={160} defaultValue={person.location} />
+            </Field>
+            <Field label={t('Date of encounter')}>
+              <Input
                 name="encounterDate"
                 type="date"
                 max={todayISO()}
                 defaultValue={encounterISO(person)}
               />
-            </label>
+            </Field>
           </div>
-          <label>
-            {t('Response to the gospel')}
-            <select name="salvationStatus" defaultValue={status}>
+          <Field label={t('Response to the gospel')}>
+            <Select name="salvationStatus" defaultValue={status}>
               <StatusOptions selected={status} />
-            </select>
-          </label>
-          <div className="choice-grid">
-            <label>
-              <input name="healing" type="checkbox" defaultChecked={person.healing} />{' '}
-              {t('Healing reported')}
-            </label>
-            <label>
-              <input
-                name="holySpiritBaptism"
-                type="checkbox"
-                defaultChecked={person.holySpiritBaptism}
-              />{' '}
-              {t('Holy Spirit baptism reported')}
-            </label>
+            </Select>
+          </Field>
+          <div className="check-grid">
+            <CheckboxCard
+              name="healing"
+              defaultChecked={person.healing}
+              label={t('Healing reported')}
+            />
+            <CheckboxCard
+              name="holySpiritBaptism"
+              defaultChecked={person.holySpiritBaptism}
+              label={t('Holy Spirit baptism reported')}
+            />
           </div>
-          <label>
-            {t('Healing details (optional)')}
-            <textarea
+          <Field label={t('Healing details (optional)')}>
+            <Textarea
               name="healingDetails"
               maxLength={1000}
               rows={3}
               defaultValue={person.healingDetails ?? ''}
             />
-          </label>
-          <button type="submit" className="primary-button">
-            {t('Save changes')}
-          </button>
+          </Field>
+          <Button type="submit">{t('Save changes')}</Button>
         </form>
       )}
-      <div className="person-details">
-        <label>
-          {t('Response to the gospel')}
-          <select
+      <div className="record-status">
+        <Field label={t('Response to the gospel')}>
+          <Select
             value={status}
             aria-label={statusAriaLabel(person.soulName, language)}
             onChange={(event) => changeStatus(salvationStatusOf(event.target.value))}
           >
             <StatusOptions selected={status} />
-          </select>
-        </label>
-        <div className="pills">
-          {person.healing && <span>{t('Healing')}</span>}
-          {person.holySpiritBaptism && <span>{t('Holy Spirit baptism')}</span>}
+          </Select>
+        </Field>
+        <div className="badge-row">
+          {person.healing && <Badge>{t('Healing')}</Badge>}
+          {person.holySpiritBaptism && <Badge tone="accent">{t('Holy Spirit baptism')}</Badge>}
         </div>
       </div>
       {person.healing && person.healingDetails && (
-        <p className="healing">
-          {/* The legacy translator skipped `.healing`, so the label stays English in Korean. */}
+        <p className="record-healing">
+          {/* The earlier client did not translate this paragraph, so the label stays English in Korean. */}
           <strong>Healing details:</strong> {person.healingDetails}
         </p>
       )}
-      <div className="prayer-section">
-        <div className="prayer-heading">
-          <h4>{t('Intercessory prayer')}</h4>
-          <span>{activeCountLabel(active.length, language)}</span>
+      <div className="prayers">
+        <div className="prayers-head">
+          <h4 className="ui-label">{t('Intercessory prayer')}</h4>
+          <span className="meta">{activeCountLabel(active.length, language)}</span>
         </div>
         {!all.length && (
-          <p className="prayer-default">
+          <p className="prayer-prompt">
             {prayerPromptLabel(person.soulName, status === 'saved', language)}
           </p>
         )}
-        {[...active, ...answered].map((prayer) => (
+        {active.map((prayer) => (
           <PrayerRow
             key={prayer.id}
             prayer={prayer}
@@ -206,13 +204,28 @@ function PersonCard({
             onEdit={onEditPrayer}
           />
         ))}
+        {answered.length > 0 && (
+          <details className="ui-disclosure">
+            <summary>{answeredCountLabel(answered.length, language)}</summary>
+            <div className="ui-disclosure-body">
+              {answered.map((prayer) => (
+                <PrayerRow
+                  key={prayer.id}
+                  prayer={prayer}
+                  editing={editingPrayerId === prayer.id}
+                  onEdit={onEditPrayer}
+                />
+              ))}
+            </div>
+          </details>
+        )}
         <AddPrayerForm
           journeyId={person.id}
           inputId={`prayer-${person.id}`}
           placeholder={prayerPlaceholderLabel(person.soulName, language)}
         />
       </div>
-    </article>
+    </Panel>
   )
 }
 

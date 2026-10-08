@@ -16,15 +16,17 @@ function JourneyTab({ snapshot }: { snapshot: Snapshot }) {
         description="Only you and NCTC admins can see these names and requests. You can correct or remove your entries here."
         action
       />
-      <section className="personal-totals">
-        <h2 className="section-label">{t('My outreach totals')}</h2>
+      <section className="section">
+        <h2 className="section-title">{t('My outreach totals')}</h2>
         <TotalsGrid totals={personalTotals(snapshot.mine)} personal />
-        <p className="totals-note">
+        <p className="fine-print">
           {t('These totals use only your records and may include repeat encounters.')}
         </p>
       </section>
-      <h2 className="section-label">{t('People I recorded')}</h2>
-      <PeopleList people={snapshot.mine} prayers={snapshot.prayers} />
+      <section className="section">
+        <h2 className="section-title">{t('People I recorded')}</h2>
+        <PeopleList people={snapshot.mine} prayers={snapshot.prayers} />
+      </section>
     </>
   )
 }

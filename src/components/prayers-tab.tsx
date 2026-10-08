@@ -15,7 +15,7 @@ function PrayersTab({ snapshot }: { snapshot: Snapshot }) {
         description="Everyone you record appears here automatically. Focus on active requests, add updates, and remember answered prayers."
       />
       {snapshot.mine.length ? (
-        <div className="prayer-list">
+        <div className="card-list section">
           {snapshot.mine.map((person) => (
             <PrayerCard
               key={person.id}
@@ -27,7 +27,9 @@ function PrayersTab({ snapshot }: { snapshot: Snapshot }) {
           ))}
         </div>
       ) : (
-        <EmptyState />
+        <div className="section">
+          <EmptyState />
+        </div>
       )}
     </>
   )

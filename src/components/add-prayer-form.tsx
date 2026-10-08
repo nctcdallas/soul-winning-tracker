@@ -1,6 +1,8 @@
 import { addPrayerFn } from '#/server/functions'
 import { useLanguage } from '#/i18n/language'
 import { useRunMutation } from '#/queries/use-run-mutation'
+import { Button } from '#/ui/button'
+import { Input } from '#/ui/field'
 import type { FormEvent } from 'react'
 
 interface AddPrayerFormProps {
@@ -29,17 +31,21 @@ function AddPrayerForm({ journeyId, inputId, placeholder }: AddPrayerFormProps) 
   }
 
   return (
-    <form className="add-prayer" onSubmit={add}>
-      <label htmlFor={inputId}>{t('Add a prayer request')}</label>
-      <div>
-        <input
+    <form className="inline-add" onSubmit={add}>
+      <label className="sr-only" htmlFor={inputId}>
+        {t('Add a prayer request')}
+      </label>
+      <div className="inline-add-row">
+        <Input
           id={inputId}
           name="requestText"
           maxLength={1000}
           required
           placeholder={placeholder}
         />
-        <button type="submit">{t('Add request')}</button>
+        <Button type="submit" tone="outline" size="sm">
+          {t('Add request')}
+        </Button>
       </div>
     </form>
   )

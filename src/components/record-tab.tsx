@@ -4,6 +4,10 @@ import { createJourneyFn } from '#/server/functions'
 import { useLanguage } from '#/i18n/language'
 import { journeyInputFrom, todayISO } from '#/journeys/helpers'
 import { useRunMutation } from '#/queries/use-run-mutation'
+import { Button } from '#/ui/button'
+import { CheckboxCard } from '#/ui/checkbox-card'
+import { Field, Input, Select, Textarea } from '#/ui/field'
+import { Panel } from '#/ui/panel'
 import { SectionHeading } from './section-heading'
 import { StatusOptions } from './status-options'
 import type { Viewer } from '#/journeys/types'
@@ -36,81 +40,71 @@ function RecordTab({ viewer }: { viewer: Viewer }) {
         heading="Share an encounter."
         description="Make one entry for each outreach encounter you personally took part in. The person will be added to your private prayer list."
       />
-      <form id="journey-form" className="record-card" onSubmit={save}>
-        <p className="recording-as">
+      <Panel as="form" id="journey-form" className="record-form" onSubmit={save}>
+        <p className="ui-callout">
           {t('Recording as')} <strong>{viewer.displayName}</strong> ({viewer.email})
         </p>
-        <h2>{t('01 · The encounter')}</h2>
-        <div className="field-grid">
-          <label className="encounter-name">
-            {t('Person reached')}
-            <input
+        <h2 className="step-title">{t('01 · The encounter')}</h2>
+        <div className="form-grid">
+          <Field label={t('Person reached')} className="form-grid-wide">
+            <Input
               name="soulName"
               required
               maxLength={100}
               placeholder={t('First name or initials')}
             />
-          </label>
-          <label>
-            {t('Location')}
-            <input
+          </Field>
+          <Field label={t('Location')}>
+            <Input
               name="location"
               required
               maxLength={160}
               placeholder={t('City, neighborhood, or event')}
             />
-          </label>
-          <label>
-            {t('Date of encounter')}
-            <input
+          </Field>
+          <Field label={t('Date of encounter')}>
+            <Input
               name="encounterDate"
               type="date"
               required
               max={todayISO()}
               defaultValue={todayISO()}
             />
-          </label>
+          </Field>
         </div>
-        <h2>{t('02 · What happened?')}</h2>
-        <label className="status-field">
-          {t('Response to the gospel')}
-          <select name="salvationStatus" defaultValue="declined">
+        <h2 className="step-title">{t('02 · What happened?')}</h2>
+        <Field label={t('Response to the gospel')}>
+          <Select name="salvationStatus" defaultValue="declined">
             <StatusOptions selected="declined" />
-          </select>
-        </label>
-        <div className="choice-grid">
-          <label>
-            <input
-              name="healing"
-              type="checkbox"
-              onChange={(event) => setHealing(event.target.checked)}
-            />{' '}
-            {t('Healing reported')}
-          </label>
-          <label>
-            <input name="holySpiritBaptism" type="checkbox" /> {t('Holy Spirit baptism reported')}
-          </label>
+          </Select>
+        </Field>
+        <div className="check-grid">
+          <CheckboxCard
+            name="healing"
+            label={t('Healing reported')}
+            onChange={(event) => setHealing(event.target.checked)}
+          />
+          <CheckboxCard name="holySpiritBaptism" label={t('Holy Spirit baptism reported')} />
         </div>
-        <label id="healing-field" className={healing ? 'healing-field' : 'healing-field hidden'}>
-          {t('Healing details (optional)')}
-          <textarea
+        <Field label={t('Healing details (optional)')} className={healing ? undefined : 'hidden'}>
+          <Textarea
             name="healingDetails"
             maxLength={1000}
             rows={4}
             placeholder={t('Describe only what the person is comfortable having recorded.')}
           />
-        </label>
-        <div className="form-footer">
-          <p>
+        </Field>
+        <div className="record-form-foot">
+          <p className="meta">
             {t(
               'Only you and NCTC admins can see this entry. Use a first name or initials when possible, and avoid sensitive details without the person’s permission.',
             )}
           </p>
-          <button type="submit" className="primary-button">
+          <Button type="submit" tone="accent" size="lg" stretch>
             {t('Save encounter')}
-          </button>
+          </Button>
         </div>
-      </form>
+      </Panel>
     </>
   )
 }

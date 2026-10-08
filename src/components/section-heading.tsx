@@ -1,4 +1,6 @@
 import { useLanguage } from '#/i18n/language'
+import { Button } from '#/ui/button'
+import { Eyebrow } from '#/ui/eyebrow'
 import { useOpenTab } from './use-open-tab'
 
 interface SectionHeadingProps {
@@ -13,18 +15,18 @@ function SectionHeading({ eyebrow, heading, description, action = false }: Secti
   const openTab = useOpenTab()
 
   return (
-    <div className="section-heading">
+    <header className="page-head">
       <div>
-        <p className="eyebrow">{t(eyebrow)}</p>
-        <h1>{t(heading)}</h1>
-        <p className="intro">{t(description)}</p>
+        <Eyebrow>{t(eyebrow)}</Eyebrow>
+        <h1 className="page-title">{t(heading)}</h1>
+        <p className="lede">{t(description)}</p>
       </div>
       {action && (
-        <button type="button" className="primary-button" onClick={() => openTab('/record')}>
+        <Button tone="accent" arrow stretch onClick={() => openTab('/record')}>
           {t('Record a person')}
-        </button>
+        </Button>
       )}
-    </div>
+    </header>
   )
 }
 

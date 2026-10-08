@@ -18,7 +18,7 @@ function PeopleList({ people, prayers, showRecorder = false }: PeopleListProps) 
   }
 
   return (
-    <div className="people-list">
+    <div className="card-list">
       {people.map((person) => (
         <PersonCard
           key={person.id}

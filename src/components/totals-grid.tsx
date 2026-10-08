@@ -1,5 +1,6 @@
 import { useLanguage } from '#/i18n/language'
-import { countLabel } from '#/journeys/helpers'
+import { localeOf } from '#/i18n/translate'
+import { Stat } from '#/ui/stat'
 import type { Totals } from '#/journeys/types'
 
 const HERO_STAT = {
@@ -25,24 +26,35 @@ interface TotalsGridProps {
   personal?: boolean
 }
 
+function countOf(totals: Totals | undefined, key: keyof Totals) {
+  const count = totals ? Number(totals[key]) : Number.NaN
+
+  return Number.isFinite(count) ? count : undefined
+}
+
 function TotalsGrid({ totals, personal = false }: TotalsGridProps) {
   const { language, t } = useLanguage()
+  const format = (count: number) => count.toLocaleString(localeOf(language))
 
   return (
     <div
-      className="stat-grid"
+      className="totals"
       aria-label={t(personal ? 'My outreach totals' : 'Live ministry totals')}
     >
-      <section className="hero-stat">
-        <span>{t(personal ? HERO_STAT.personalLabel : HERO_STAT.publicLabel)}</span>
-        <strong>{countLabel(totals, HERO_STAT.key, language)}</strong>
-        <small>{t(personal ? HERO_STAT.personalNote : HERO_STAT.publicNote)}</small>
-      </section>
+      <Stat
+        variant="hero"
+        label={t(personal ? HERO_STAT.personalLabel : HERO_STAT.publicLabel)}
+        value={countOf(totals, HERO_STAT.key)}
+        note={t(personal ? HERO_STAT.personalNote : HERO_STAT.publicNote)}
+        format={format}
+      />
       {SMALL_STATS.map((stat) => (
-        <section className="small-stat" key={stat.key}>
-          <span>{t(personal ? stat.personalLabel : stat.publicLabel)}</span>
-          <strong>{countLabel(totals, stat.key, language)}</strong>
-        </section>
+        <Stat
+          key={stat.key}
+          label={t(personal ? stat.personalLabel : stat.publicLabel)}
+          value={countOf(totals, stat.key)}
+          format={format}
+        />
       ))}
     </div>
   )

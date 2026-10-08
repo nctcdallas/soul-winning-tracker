@@ -10,7 +10,9 @@ function TeamTab({ snapshot }: { snapshot: Snapshot }) {
         heading="Team records"
         description="Review encounters and prayer follow-up across the ministry team."
       />
-      <PeopleList people={snapshot.team ?? []} prayers={snapshot.prayers} showRecorder />
+      <div className="section">
+        <PeopleList people={snapshot.team ?? []} prayers={snapshot.prayers} showRecorder />
+      </div>
     </>
   )
 }

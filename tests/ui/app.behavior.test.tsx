@@ -412,7 +412,7 @@ test('should clear the notice when the member changes tab', async () => {
 
   fill(card.getByLabelText('Response to the gospel for Marcus <T>'), 'declined')
   await expectNotice('Salvation status updated.')
-  fireEvent.click(screen.getByRole('button', { name: 'Prayer list' }))
+  fireEvent.click(screen.getByRole('link', { name: 'Prayer list' }))
 
   await screen.findByRole('heading', { name: 'My prayer list', level: 1 })
 
@@ -494,7 +494,7 @@ test('should send a member who is not a leader from the team page to the overvie
 
   expect(await screen.findByRole('heading', { name: 'Every person matters.' })).toBeTruthy()
   expect(router.state.location.pathname).toBe('/')
-  expect(screen.queryByRole('button', { name: 'Team records' })).toBeNull()
+  expect(screen.queryByRole('link', { name: 'Team records' })).toBeNull()
 })
 
 test('should open the team page for a leader', async () => {

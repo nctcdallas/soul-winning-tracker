@@ -1,6 +1,9 @@
 import { deletePrayerFn, editPrayerFn, setPrayerStatusFn } from '#/server/functions'
 import { useLanguage } from '#/i18n/language'
 import { useRunMutation } from '#/queries/use-run-mutation'
+import { Button } from '#/ui/button'
+import { Field, Textarea } from '#/ui/field'
+import { TextAction } from '#/ui/text-action'
 import type { Prayer } from '#/journeys/types'
 import type { FormEvent } from 'react'
 
@@ -39,33 +42,32 @@ function PrayerRow({ prayer, editing, onEdit }: PrayerRowProps) {
 
   if (editing) {
     return (
-      <form className="prayer-edit" onSubmit={save}>
-        <label>
-          {t('Edit prayer request')}
-          <textarea
+      <form className="prayer-editor" onSubmit={save}>
+        <Field label={t('Edit prayer request')}>
+          <Textarea
             name="requestText"
             maxLength={1000}
             required
             rows={3}
             defaultValue={prayer.requestText}
           />
-        </label>
-        <div className="record-actions">
-          <button type="submit">{t('Save request')}</button>
-          <button type="button" onClick={() => onEdit(null)}>
-            {t('Cancel')}
-          </button>
+        </Field>
+        <div className="action-row">
+          <Button type="submit" size="sm">
+            {t('Save request')}
+          </Button>
+          <TextAction onClick={() => onEdit(null)}>{t('Cancel')}</TextAction>
         </div>
       </form>
     )
   }
 
   return (
-    <div className={answered ? 'prayer-request answered' : 'prayer-request'}>
-      <p>{prayer.requestText}</p>
-      <div className="record-actions">
-        <button
-          type="button"
+    <div className={answered ? 'prayer-item prayer-item-answered' : 'prayer-item'}>
+      <p className="prayer-text">{prayer.requestText}</p>
+      <div className="action-row">
+        <TextAction
+          tone={answered ? 'default' : 'accent'}
           onClick={() =>
             run(
               () =>
@@ -77,13 +79,11 @@ function PrayerRow({ prayer, editing, onEdit }: PrayerRowProps) {
           }
         >
           {answered ? t('Reopen') : t('Mark answered')}
-        </button>
-        <button type="button" onClick={() => onEdit(prayer.id)}>
-          {t('Edit')}
-        </button>
-        <button type="button" className="danger-link" onClick={remove}>
+        </TextAction>
+        <TextAction onClick={() => onEdit(prayer.id)}>{t('Edit')}</TextAction>
+        <TextAction tone="danger" onClick={remove}>
           {t('Remove')}
-        </button>
+        </TextAction>
       </div>
     </div>
   )
