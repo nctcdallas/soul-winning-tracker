@@ -880,6 +880,7 @@ html[lang='ko'] .ui-nav-item {
   inset: 0 0 0 auto;
   z-index: 60;
   overflow-y: auto;
+  overscroll-behavior: contain;
   width: min(400px, 100vw);
   padding: 32px 24px 56px;
   border-left: 1px solid var(--border-hairline);
@@ -989,6 +990,7 @@ html[lang='ko'] :is(.ui-label, .ui-field-label, .ui-eyebrow, .ui-badge, .ui-stat
     inset: auto;
     top: 88px;
     z-index: auto;
+    overscroll-behavior: auto;
     align-self: start;
     width: 400px;
     max-height: calc(100vh - 112px);
